@@ -1,0 +1,4 @@
+variable = "Hello World"
+
+if variable == "Hello World" :
+    print("Variable is equal to Hello World")
