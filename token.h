@@ -28,6 +28,7 @@ typedef enum
   TOKEN_LESS_EQUAL = 282,
   TOKEN_GREATER_EQUAL = 283,
   TOKEN_COMMA = 284,
+  TOKEN_LINEBREAK = 285
 }
 token_t;
 
@@ -58,6 +59,7 @@ inline const char* token_str(token_t t)
     case TOKEN_LESS_EQUAL: return "<LESS_EQUAL>";
     case TOKEN_GREATER_EQUAL: return "<GREATER_EQUAL>";
     case TOKEN_COMMA: return "<COMMA>";
+    case TOKEN_LINEBREAK: return "<LINEBREAK>";
     
 
  
