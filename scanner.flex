@@ -7,7 +7,7 @@ DIGIT       [0-9]
 LETTER      [a-zA-Z_]
 ID          {LETTER}({LETTER}|{DIGIT})*
 NUMBER      {DIGIT}+("."{DIGIT}+)?
-WHITESPACE  [ \t\n]
+IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 
 %%
 " "     { /* Ignore */ }
@@ -45,7 +45,7 @@ WHITESPACE  [ \t\n]
 "*"         { return TOKEN_MULTIPLY; }
 "/"         { return TOKEN_DIVIDE; }
 {NUMBER}    { return TOKEN_NUMBER; }
-{WHITESPACE} { /* Ignorar */ }
+
 
 int yywrap() { return 1; }
 %%
