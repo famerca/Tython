@@ -7,6 +7,7 @@ DIGIT      [0-9]
 LETTER     [A-Za-z]
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 TEXT       \"({DIGIT}|{LETTER}|{SPACE})*\"
+NUMBER      {DIGIT}+("."{DIGIT}+)?
 
 %%
 " "     { /* Ignore */ }
@@ -30,8 +31,20 @@ TEXT       \"({DIGIT}|{LETTER}|{SPACE})*\"
 ")"          { return TOKEN_RPAREN; }
 ":"         { return TOKEN_BICOND; }
 ","          { return TOKEN_COMMA; }
+"Int"       { return TOKEN_INT; }
+"Float"     { return TOKEN_FLOAT; }
+"String"    { return TOKEN_STRING; }
+"Any"       { return TOKEN_ANY; }
+"AND"       { return TOKEN_AND; }
+"OR"        { return TOKEN_OR; }
+"NOT"       { return TOKEN_NOT; }
 {IDENTIFIER} { return TOKEN_IDENTIFIER; }
 {TEXT}       { return TOKEN_STRING; }
+"+"         { return TOKEN_PLUS; }
+"-"         { return TOKEN_MINUS; }
+"*"         { return TOKEN_MULTIPLY; }
+"/"         { return TOKEN_DIVIDE; }
+{NUMBER}    { return TOKEN_NUMBER; }
 %%
 
 int yywrap() { return 1; }

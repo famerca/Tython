@@ -17,4 +17,4 @@ main.o: main.c token.h
 
 .PHONY:
 clean:
-	$(RM) *.o scanner.c scanner
+	$(RM) *.o scanner.c scanner.out

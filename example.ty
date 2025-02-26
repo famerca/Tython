@@ -1,4 +1,7 @@
 variable = "Hello World"
+variable_tipada_1:Int = 10
+variable_tipada_2:Float = 10.5
+variable_tipada_3:String = "una cadena"
 
 if variable == "Hello World" :
     print("Variable is equal to Hello World")
