@@ -2,7 +2,7 @@
 #include "token.h"
 %}
 
-
+SPACE      [ \t\n]
 DIGIT      [0-9]
 LETTER     [A-Za-z]
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
