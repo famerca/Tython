@@ -10,7 +10,7 @@ typedef enum
     TOKEN_TAB = 262,
     TOKEN_BICOND = 263,
     TOKEN_ASSIGN = 264,
-    TOKEN_IDENTIFIER = 265,
+    TOKEN_IDENTIFIER = 265, // Identificador (nombres de variables, etc.)
     TOKEN_LPAREN = 266,
     TOKEN_RPAREN = 267,
     TOKEN_ARROW = 268,
@@ -31,7 +31,7 @@ typedef enum
     TOKEN_LINEBREAK = 285,
     TOKEN_INT = 286,        // Tipo de dato Int
     TOKEN_FLOAT = 287,      // Tipo de dato Float
-    //TOKEN_STRING = 288,     // Tipo de dato String
+   
     TOKEN_ANY = 288,        // Tipo de dato Any
     TOKEN_AND = 289,        // Operador lógico AND
     TOKEN_OR = 290,         // Operador lógico OR
@@ -39,8 +39,7 @@ typedef enum
     TOKEN_PLUS = 292,       // Operador aritmético +
     TOKEN_MINUS = 293,      // Operador aritmético -
     TOKEN_MULTIPLY = 294,   // Operador aritmético *
-    TOKEN_DIVIDE = 295,     // Operador aritmético /
-    //TOKEN_IDENTIFIER = 296, // Identificador (nombres de variables, etc.)
+    TOKEN_DIVIDE = 295,     // Operador aritmético / 
     TOKEN_NUMBER = 296      // Números (enteros o flotantes)
 }
 token_t;
@@ -84,7 +83,6 @@ inline const char* to_str(token_t t)
         case TOKEN_MINUS: return "MINUS";
         case TOKEN_MULTIPLY: return "MULTIPLY";
         case TOKEN_DIVIDE: return "DIVIDE";
-        //case TOKEN_IDENTIFIER: return "IDENTIFIER";
         case TOKEN_NUMBER: return "NUMBER";
         default: return "UNKNOWN";
     }

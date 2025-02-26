@@ -8,9 +8,10 @@ LETTER      [a-zA-Z_]
 ID          {LETTER}({LETTER}|{DIGIT})*
 NUMBER      {DIGIT}+("."{DIGIT}+)?
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
+TEXT       \"({DIGIT}|{LETTER}|" ")*\"
 
 %%
-" "     { /* Ignore */ }
+"{SPACE}"     { /* Ignore */ }
 "\n"     { return TOKEN_LINEBREAK; }
 "\t"         { return TOKEN_TAB; }
 "="          { return TOKEN_ASSIGN; }
@@ -45,7 +46,6 @@ IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 "*"         { return TOKEN_MULTIPLY; }
 "/"         { return TOKEN_DIVIDE; }
 {NUMBER}    { return TOKEN_NUMBER; }
-
+%%
 
 int yywrap() { return 1; }
-%%
