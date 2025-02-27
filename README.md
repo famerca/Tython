@@ -15,6 +15,6 @@
 En Tython, puedes declarar variables con tipos específicos:
 
 ```tython
-nombre: str = "Juan"
-edad: int = 25
-es_estudiante: bool = True
+nombre: String = "Juan"
+edad: Int = 25
+es_estudiante: Float = 3.5
