@@ -1,0 +1,7 @@
+variable_uno : Int = 10
+variable_dos : Float = 10.5
+
+if variable_uno < variable_dos :
+    print("Variable uno es menor que variable dos")
+else :
+    print("Variable uno es mayor que variable dos")
