@@ -3,15 +3,16 @@
 %}
 
 
-DIGIT       [0-9]
-LETTER      [a-zA-Z_]
-NUMBER      {DIGIT}+("."{DIGIT}+)?
+SPACE      [ \t\n]
+DIGIT      [0-9]
+LETTER     [A-Za-z]
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
-TEXT       \"({DIGIT}|{LETTER}|" ")*\"
+TEXT       \"({DIGIT}|{LETTER}|{SPACE})*\"
+NUMBER      {DIGIT}+("."{DIGIT}+)?
 TYPE        Int|Float|String|Any
 
 %%
-"{SPACE}"     { /* Ignore */ }
+" "     { /* Ignore */ }
 "\n"     { return TOKEN_LINEBREAK; }
 "\t"         { return TOKEN_TAB; }
 "="          { return TOKEN_ASSIGN; }
