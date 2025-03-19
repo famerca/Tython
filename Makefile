@@ -1,20 +1,27 @@
-CC = gcc
+CXX = g++
 FLEX = flex
+BISON = bison -Wcounterexamples --defines=token.h
 
-all: scanner.out
+all: validator
 
-scanner.out: scanner.o main.o
-	$(CC) scanner.o main.o -o $@
+validator: parser.o scanner.o main.o
+	$(CXX) scanner.o parser.o main.o -o validator.out
 
-scanner.o: scanner.c token.h
-	$(CC) -c $< -o $@
+parser.o: parser.c
+	$(CXX) -c parser.c
+
+parser.c: parser.bison
+	$(BISON) -v --output parser.c parser.bison
+
+scanner.o: token.h scanner.c
+	$(CXX) -c scanner.c
 
 scanner.c: scanner.flex
-	$(FLEX) -o $@ $<
+	$(FLEX) -o scanner.c scanner.flex
 
-main.o: main.c token.h
-	$(CC) -c $< -o $@
+main.o: token.h main.c
+	$(CXX) -c main.c
 
 .PHONY:
 clean:
-	$(RM) *.o scanner.c scanner
+	$(RM) *.o parser.c parser.output token.h scanner.c validator

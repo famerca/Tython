@@ -5,10 +5,10 @@
 
 DIGIT       [0-9]
 LETTER      [a-zA-Z_]
-ID          {LETTER}({LETTER}|{DIGIT})*
 NUMBER      {DIGIT}+("."{DIGIT}+)?
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 TEXT       \"({DIGIT}|{LETTER}|" ")*\"
+TYPE        Int|Float|String|Any
 
 %%
 "{SPACE}"     { /* Ignore */ }
@@ -32,15 +32,12 @@ TEXT       \"({DIGIT}|{LETTER}|" ")*\"
 ")"          { return TOKEN_RPAREN; }
 ":"         { return TOKEN_BICOND; }
 ","          { return TOKEN_COMMA; }
-{IDENTIFIER} { return TOKEN_IDENTIFIER; }
-{TEXT}       { return TOKEN_STRING; }
-"Int"       { return TOKEN_INT; }
-"Float"     { return TOKEN_FLOAT; }
-"String"    { return TOKEN_STRING; }
-"Any"       { return TOKEN_ANY; }
 "AND"       { return TOKEN_AND; }
 "OR"        { return TOKEN_OR; }
 "NOT"       { return TOKEN_NOT; }
+{TYPE}       { return TOKEN_TYPE; }
+{IDENTIFIER} { return TOKEN_IDENTIFIER; }
+{TEXT}       { return TOKEN_STRING; }
 "+"         { return TOKEN_PLUS; }
 "-"         { return TOKEN_MINUS; }
 "*"         { return TOKEN_MULTIPLY; }
