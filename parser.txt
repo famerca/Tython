@@ -1,26 +1,59 @@
 %{
+#include "token.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-extern int yylex();
-int yyerror(const char*);
+// Declaración de la función yylex generada por Flex
+int yylex(void);
+
+// Función para manejar errores
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
 %}
 
-// Token declarations
-%token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_TAB TOKEN_BICOND
-%token TOKEN_ASSIGN TOKEN_IDENTIFIER TOKEN_LPAREN TOKEN_RPAREN TOKEN_ARROW
-%token TOKEN_COMPARE TOKEN_DIFFERENT TOKEN_IF TOKEN_ELSE TOKEN_FOR
-%token TOKEN_WHILE TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_GREATER TOKEN_LESS
-%token TOKEN_LESS_EQUAL TOKEN_GREATER_EQUAL TOKEN_COMMA TOKEN_LINEBREAK
-%token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY
-%token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
+// Declaración de los tokens
+%token TOKEN_LINEBREAK
+%token TOKEN_TAB
+%token TOKEN_ASSIGN
+%token TOKEN_IF
+%token TOKEN_ELSE
+%token TOKEN_FOR
+%token TOKEN_WHILE
+%token TOKEN_FUNC_DEF
+%token TOKEN_RETURN
+%token TOKEN_ARROW
+%token TOKEN_COMPARE
+%token TOKEN_DIFFERENT
+%token TOKEN_LESS
+%token TOKEN_GREATER
+%token TOKEN_LESS_EQUAL
+%token TOKEN_GREATER_EQUAL
+%token TOKEN_LPAREN
+%token TOKEN_RPAREN
+%token TOKEN_BICOND
+%token TOKEN_COMMA
+%token TOKEN_AND
+%token TOKEN_OR
+%token TOKEN_NOT
+%token TOKEN_TYPE
+%token TOKEN_IDENTIFIER
+%token TOKEN_STRING
+%token TOKEN_PLUS
+%token TOKEN_MINUS
+%token TOKEN_MULTIPLY
+%token TOKEN_DIVIDE
+%token TOKEN_NUMBER
 
-// Precedence and associativity
+// Precedencia y asociatividad de operadores
 %left TOKEN_PLUS TOKEN_MINUS
 %left TOKEN_MULTIPLY TOKEN_DIVIDE
 %right TOKEN_ASSIGN
 
+// Inicio de la gramática
 %%
 
+// Reglas gramaticales
 program:
     | program statement
     ;
@@ -68,8 +101,7 @@ parameter:
 
 %%
 
-int yyerror(const char* s)
-{
-    printf("Parse error: %s\n", s);
-    return 1;
+int main(int argc, char **argv) {
+    yyparse();
+    return 0;
 }

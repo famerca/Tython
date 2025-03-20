@@ -31,7 +31,7 @@ TYPE        Int|Float|String|Any
 ">="         { return TOKEN_GREATER_EQUAL; }
 "("          { return TOKEN_LPAREN; }
 ")"          { return TOKEN_RPAREN; }
-":"         { return TOKEN_BICOND; }
+":"         { return TOKEN_COLON; }
 ","          { return TOKEN_COMMA; }
 "AND"       { return TOKEN_AND; }
 "OR"        { return TOKEN_OR; }
