@@ -1,1 +1,4 @@
 variable: String = "Hello World"
+variable: Any = 10
+variable: Float = 10.5
+variable: Int = 10

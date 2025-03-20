@@ -1,7 +1,10 @@
 %{
 #include "token.h"
-%}
 
+int current_indent = 0;  // Nivel de indentación actual
+int new_indent = 0;      // Nivel de indentación en la nueva línea
+
+%}
 
 SPACE      [ \t\n]
 DIGIT      [0-9]
@@ -12,9 +15,26 @@ NUMBER      {DIGIT}+("."{DIGIT}+)?
 TYPE        Int|Float|String|Any
 
 %%
-" "     { /* Ignore */ }
-"\n"     { return TOKEN_LINEBREAK; }
-"\t"         { return TOKEN_TAB; }
+
+\n("    ")+ {
+    new_indent = (yyleng - 1) / 4;  // Restamos 1 para ignorar el \n
+    //printf("leng: %d, new_indent: %d, current_indent: %d\n", yyleng, new_indent, current_indent);
+    if (new_indent > current_indent) {
+        current_indent = new_indent;
+        return TOKEN_INDENT;
+    } else if (new_indent < current_indent) {
+        // Emitir TOKEN_DEDENT por cada nivel de indentación que se cierra
+        int dedent_levels = current_indent - new_indent;
+        current_indent = new_indent;
+        for (int i = 0; i < dedent_levels; i++) {
+            return TOKEN_DEDENT;
+        }
+    } else {
+        return TOKEN_LINEBREAK;
+    }
+}
+\n             { return TOKEN_LINEBREAK; }
+{SPACE}   { /* ignore */ }
 "="          { return TOKEN_ASSIGN; }
 "if"          { return TOKEN_IF; }
 "else"        { return TOKEN_ELSE; }
@@ -33,17 +53,29 @@ TYPE        Int|Float|String|Any
 ")"          { return TOKEN_RPAREN; }
 ":"         { return TOKEN_COLON; }
 ","          { return TOKEN_COMMA; }
+"+"         { return TOKEN_PLUS; }
+"-"         { return TOKEN_MINUS; }
+"*"         { return TOKEN_MULTIPLY; }
+"/"         { return TOKEN_DIVIDE; }
 "AND"       { return TOKEN_AND; }
 "OR"        { return TOKEN_OR; }
 "NOT"       { return TOKEN_NOT; }
 {TYPE}       { return TOKEN_TYPE; }
 {IDENTIFIER} { return TOKEN_IDENTIFIER; }
 {TEXT}       { return TOKEN_STRING; }
-"+"         { return TOKEN_PLUS; }
-"-"         { return TOKEN_MINUS; }
-"*"         { return TOKEN_MULTIPLY; }
-"/"         { return TOKEN_DIVIDE; }
 {NUMBER}    { return TOKEN_NUMBER; }
+
+<<EOF>> {
+
+    if(current_indent > 0) {
+        --current_indent;
+        return TOKEN_DEDENT;
+    }
+    yyterminate(); 
+}
+
 %%
 
-int yywrap() { return 1; }
+int yywrap() { 
+    return 1; 
+ }
