@@ -1,4 +1,5 @@
 #pragma once
+#include "stdio.h"
 
 typedef enum
 {
@@ -8,7 +9,7 @@ typedef enum
   TOKEN_AND = 260, //operador lógico AND
   TOKEN_OR = 261, //operador lógico OR
   TOKEN_TAB = 262,
-  TOKEN_BICOND = 263,
+  TOKEN_COLON = 263,
   TOKEN_ASSIGN = 264,
   TOKEN_IDENTIFIER = 265,
   TOKEN_LPAREN = 266,
@@ -30,14 +31,15 @@ typedef enum
   TOKEN_COMMA = 284,
   TOKEN_LINEBREAK = 285,
 
-  TOKEN_INT = 286,        // Tipo de dato Int
-  TOKEN_FLOAT = 287,      // Tipo de dato Float
-  TOKEN_ANY = 288,        // Tipo de dato Any
+  TOKEN_TYPE = 286,        // Tipo de dato Int
   TOKEN_PLUS = 292,       // Operador aritmético +
   TOKEN_MINUS = 293,      // Operador aritmético -
   TOKEN_MULTIPLY = 294,   // Operador aritmético *
   TOKEN_DIVIDE = 295,     // Operador aritmético / 
-  TOKEN_NUMBER = 296      // Números (enteros o flotantes)
+  TOKEN_NUMBER = 296,      // Números (enteros o flotantes)
+
+  TOKEN_INDENT = 297,     // Indentación
+  TOKEN_DEDENT = 298,     // Dedentación
 }
 token_t;
 
@@ -57,7 +59,7 @@ inline const char* token_str(token_t t)
     case TOKEN_TAB: return "<TAB>";
     case TOKEN_PRINT: return "<PRINT>";
     case TOKEN_IF: return "<IF>";
-    case TOKEN_BICOND: return "<BICOND>";
+    case TOKEN_COLON: return "<COLON>";
     case TOKEN_ELSE: return "<ELSE>";
     case TOKEN_FOR: return "<FOR>";
     case TOKEN_WHILE: return "<WHILE>";
@@ -69,7 +71,6 @@ inline const char* token_str(token_t t)
     case TOKEN_GREATER_EQUAL: return "<GREATER_EQUAL>";
     case TOKEN_COMMA: return "<COMMA>";
     case TOKEN_LINEBREAK: return "<LINEBREAK>";
-    case TOKEN_ANY: return "<ANY>";
     case TOKEN_AND: return "<AND>";
     case TOKEN_OR: return "<OR>";
     case TOKEN_NOT: return "<NOT>";
@@ -78,10 +79,9 @@ inline const char* token_str(token_t t)
     case TOKEN_MULTIPLY: return "<MULTIPLY>";
     case TOKEN_DIVIDE: return "<DIVIDE>";
     case TOKEN_NUMBER: return "<NUMBER>";
-    case TOKEN_INT: return "<INT>";
-    case TOKEN_FLOAT: return "<FLOAT>";
-    
-
+    case TOKEN_TYPE: return "<TYPE>";
+    case TOKEN_INDENT: return "<INDENT>";
+    case TOKEN_DEDENT: return "<DEDENT>";
  
     default: return "<UNKNOWN>";
   }

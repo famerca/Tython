@@ -1,7 +1,10 @@
-variable_uno : Int = 10
-variable_dos : Float = 10.5
+number1: Int = 10
+number2: Int = 20
+number3: Int
 
-if variable_uno < variable_dos :
-    print("Variable uno es menor que variable dos")
-else :
-    print("Variable uno es mayor que variable dos")
+if number1 == number2 :
+    print("number1 is greater than number2")
+
+else:
+    number3 = number1 + number2
+    print(number3)
