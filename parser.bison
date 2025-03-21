@@ -26,12 +26,16 @@ block:
     TOKEN_INDENT statement_list TOKEN_DEDENT
     ;
 
+linebreaks:
+    TOKEN_LINEBREAK linebreaks  // Uno o más saltos de línea
+    | /* vacío */               // Ningún salto de línea
+    ;
+
 // Lista de statements
 statement_list: 
-    statement_list TOKEN_LINEBREAK statement
-    | statement_list TOKEN_LINEBREAK control block
-    | TOKEN_LINEBREAK statement_list 
-    | statement_list TOKEN_LINEBREAK
+    statement_list linebreaks statement
+    | statement_list linebreaks control block
+    | linebreaks statement_list 
     | statement
     | control block
     ;
