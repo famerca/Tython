@@ -1,0 +1,6 @@
+variable: String = "Hello World"
+
+def print_hello(name: String) -> Any:
+    print("Hello " + name)
+
+print_hello("World")

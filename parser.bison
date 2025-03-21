@@ -18,12 +18,14 @@ int yyerror(const char*);
 
 // Regla principal
 program: 
-    statement_list
+    program control block
+    | block
     ;
 
 // Bloque de código (indentación)
 block: 
-    TOKEN_INDENT statement_list TOKEN_DEDENT
+      statement_list
+    | TOKEN_INDENT statement_list TOKEN_DEDENT
     ;
 
 // Lista de statements
@@ -33,10 +35,29 @@ statement_list:
     | statement
     ;
 
+control:
+    TOKEN_IF expression TOKEN_COLON
+    | TOKEN_ELSE TOKEN_COLON
+    | TOKEN_FOR expression TOKEN_COLON
+    | TOKEN_WHILE expression TOKEN_COLON
+    ;
+
+parameters:
+    parameters TOKEN_COMMA parameter
+    | parameter
+    ;
+
+parameter:
+      TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE
+    | TOKEN_IDENTIFIER
+    ;
+
 statement:
        TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression
+    |  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE
     |  TOKEN_IDENTIFIER TOKEN_ASSIGN expression
-    |  TOKEN_IF expression TOKEN_COLON block
+    |  TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+    |  TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
     |  expression
     ;
 
@@ -44,8 +65,25 @@ expression:
       TOKEN_NUMBER
     | TOKEN_STRING
     | TOKEN_IDENTIFIER
-    | TOKEN_IDENTIFIER TOKEN_COMPARE expression
+    | expression operator expression
     | TOKEN_IDENTIFIER TOKEN_LPAREN expression TOKEN_RPAREN
+    | TOKEN_NOT expression
+    | TOKEN_LPAREN expression TOKEN_RPAREN
+    ;
+
+operator:
+    TOKEN_COMPARE
+    | TOKEN_DIFFERENT
+    | TOKEN_LESS
+    | TOKEN_GREATER
+    | TOKEN_LESS_EQUAL
+    | TOKEN_GREATER_EQUAL
+    | TOKEN_AND
+    | TOKEN_OR
+    | TOKEN_PLUS
+    | TOKEN_MINUS
+    | TOKEN_MULTIPLY
+    | TOKEN_DIVIDE
     ;
 
 %%

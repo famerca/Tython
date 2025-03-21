@@ -33,7 +33,19 @@ TYPE        Int|Float|String|Any
         return TOKEN_LINEBREAK;
     }
 }
-\n             { return TOKEN_LINEBREAK; }
+
+\n {
+    // Si hay una reducción en la indentación (salto de línea sin espacios)
+    if (current_indent > 0) {
+        int dedent_levels = current_indent;
+        current_indent = 0;  // Volver al nivel base de indentación
+        for (int i = 0; i < dedent_levels; i++) {
+            return TOKEN_DEDENT;
+        }
+    }
+    return TOKEN_LINEBREAK;
+}
+
 {SPACE}   { /* ignore */ }
 "="          { return TOKEN_ASSIGN; }
 "if"          { return TOKEN_IF; }
@@ -53,18 +65,17 @@ TYPE        Int|Float|String|Any
 ")"          { return TOKEN_RPAREN; }
 ":"         { return TOKEN_COLON; }
 ","          { return TOKEN_COMMA; }
-"+"         { return TOKEN_PLUS; }
-"-"         { return TOKEN_MINUS; }
-"*"         { return TOKEN_MULTIPLY; }
-"/"         { return TOKEN_DIVIDE; }
 "AND"       { return TOKEN_AND; }
 "OR"        { return TOKEN_OR; }
 "NOT"       { return TOKEN_NOT; }
 {TYPE}       { return TOKEN_TYPE; }
 {IDENTIFIER} { return TOKEN_IDENTIFIER; }
 {TEXT}       { return TOKEN_STRING; }
+"+"         { return TOKEN_PLUS; }
+"-"         { return TOKEN_MINUS; }
+"*"         { return TOKEN_MULTIPLY; }
+"/"         { return TOKEN_DIVIDE; }
 {NUMBER}    { return TOKEN_NUMBER; }
-
 <<EOF>> {
 
     if(current_indent > 0) {

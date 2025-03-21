@@ -1,0 +1,1372 @@
+Terminales no usados en la gramática
+
+    TOKEN_TAB
+    TOKEN_BICOND
+    TOKEN_RETURN
+
+
+Estado 10 conflictos: 1 desplazamiento/reducción
+Estado 14 conflictos: 12 desplazamiento/reducción
+Estado 53 conflictos: 12 desplazamiento/reducción
+
+
+Gramática
+
+    0 $accept: program $end
+
+    1 program: program control block
+    2        | block
+
+    3 block: statement_list
+    4      | TOKEN_INDENT statement_list TOKEN_DEDENT
+
+    5 statement_list: statement_list TOKEN_LINEBREAK statement
+    6               | statement_list TOKEN_LINEBREAK
+    7               | statement
+
+    8 control: TOKEN_IF expression TOKEN_COLON
+    9        | TOKEN_ELSE TOKEN_COLON
+   10        | TOKEN_FOR expression TOKEN_COLON
+   11        | TOKEN_WHILE expression TOKEN_COLON
+
+   12 parameters: parameters TOKEN_COMMA parameter
+   13           | parameter
+
+   14 parameter: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE
+   15          | TOKEN_IDENTIFIER
+
+   16 statement: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression
+   17          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE
+   18          | TOKEN_IDENTIFIER TOKEN_ASSIGN expression
+   19          | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+   20          | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+   21          | expression
+
+   22 expression: TOKEN_NUMBER
+   23           | TOKEN_STRING
+   24           | TOKEN_IDENTIFIER
+   25           | expression operator expression
+   26           | TOKEN_IDENTIFIER TOKEN_LPAREN expression TOKEN_RPAREN
+   27           | TOKEN_NOT expression
+   28           | TOKEN_LPAREN expression TOKEN_RPAREN
+
+   29 operator: TOKEN_COMPARE
+   30         | TOKEN_DIFFERENT
+   31         | TOKEN_LESS
+   32         | TOKEN_GREATER
+   33         | TOKEN_LESS_EQUAL
+   34         | TOKEN_GREATER_EQUAL
+   35         | TOKEN_AND
+   36         | TOKEN_OR
+   37         | TOKEN_PLUS
+   38         | TOKEN_MINUS
+   39         | TOKEN_MULTIPLY
+   40         | TOKEN_DIVIDE
+
+
+Terminales con las reglas donde aparecen
+
+    $end (0) 0
+    error (256)
+    TOKEN_STRING (258) 23
+    TOKEN_NOT (259) 27
+    TOKEN_AND (260) 35
+    TOKEN_OR (261) 36
+    TOKEN_TAB (262)
+    TOKEN_BICOND (263)
+    TOKEN_ASSIGN (264) 16 18
+    TOKEN_IDENTIFIER (265) 14 15 16 17 18 19 20 24 26
+    TOKEN_LPAREN (266) 19 20 26 28
+    TOKEN_RPAREN (267) 19 20 26 28
+    TOKEN_ARROW (268) 20
+    TOKEN_COMPARE (269) 29
+    TOKEN_DIFFERENT (270) 30
+    TOKEN_IF (271) 8
+    TOKEN_ELSE (272) 9
+    TOKEN_FOR (273) 10
+    TOKEN_WHILE (274) 11
+    TOKEN_FUNC_DEF (275) 19 20
+    TOKEN_RETURN (276)
+    TOKEN_GREATER (277) 32
+    TOKEN_LESS (278) 31
+    TOKEN_LESS_EQUAL (279) 33
+    TOKEN_GREATER_EQUAL (280) 34
+    TOKEN_COMMA (281) 12
+    TOKEN_LINEBREAK (282) 5 6
+    TOKEN_PLUS (283) 37
+    TOKEN_MINUS (284) 38
+    TOKEN_MULTIPLY (285) 39
+    TOKEN_INDENT (286) 4
+    TOKEN_DEDENT (287) 4
+    TOKEN_DIVIDE (288) 40
+    TOKEN_NUMBER (289) 22
+    TOKEN_COLON (290) 8 9 10 11 14 16 17 19 20
+    TOKEN_TYPE (291) 14 16 17 20
+
+
+No terminales con las reglas donde aparecen
+
+    $accept (37)
+        on left: 0
+    program (38)
+        on left: 1 2
+        on right: 0 1
+    block (39)
+        on left: 3 4
+        on right: 1 2 19 20
+    statement_list (40)
+        on left: 5 6 7
+        on right: 3 4 5 6
+    control (41)
+        on left: 8 9 10 11
+        on right: 1
+    parameters (42)
+        on left: 12 13
+        on right: 12 19 20
+    parameter (43)
+        on left: 14 15
+        on right: 12 13
+    statement (44)
+        on left: 16 17 18 19 20 21
+        on right: 5 7
+    expression (45)
+        on left: 22 23 24 25 26 27 28
+        on right: 8 10 11 16 18 21 25 26 27 28
+    operator (46)
+        on left: 29 30 31 32 33 34 35 36 37 38 39 40
+        on right: 25
+
+
+Estado 0
+
+    0 $accept: • program $end
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 3
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_FUNC_DEF    desplazar e ir al estado 5
+    TOKEN_INDENT      desplazar e ir al estado 6
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    program         ir al estado 8
+    block           ir al estado 9
+    statement_list  ir al estado 10
+    statement       ir al estado 11
+    expression      ir al estado 12
+
+
+Estado 1
+
+   23 expression: TOKEN_STRING •
+
+    $default  reduce usando la regla 23 (expression)
+
+
+Estado 2
+
+   27 expression: TOKEN_NOT • expression
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 14
+
+
+Estado 3
+
+   16 statement: TOKEN_IDENTIFIER • TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression
+   17          | TOKEN_IDENTIFIER • TOKEN_COLON TOKEN_TYPE
+   18          | TOKEN_IDENTIFIER • TOKEN_ASSIGN expression
+   24 expression: TOKEN_IDENTIFIER •
+   26           | TOKEN_IDENTIFIER • TOKEN_LPAREN expression TOKEN_RPAREN
+
+    TOKEN_ASSIGN  desplazar e ir al estado 15
+    TOKEN_LPAREN  desplazar e ir al estado 16
+    TOKEN_COLON   desplazar e ir al estado 17
+
+    $default  reduce usando la regla 24 (expression)
+
+
+Estado 4
+
+   28 expression: TOKEN_LPAREN • expression TOKEN_RPAREN
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 18
+
+
+Estado 5
+
+   19 statement: TOKEN_FUNC_DEF • TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+   20          | TOKEN_FUNC_DEF • TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+
+    TOKEN_IDENTIFIER  desplazar e ir al estado 19
+
+
+Estado 6
+
+    4 block: TOKEN_INDENT • statement_list TOKEN_DEDENT
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 3
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_FUNC_DEF    desplazar e ir al estado 5
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    statement_list  ir al estado 20
+    statement       ir al estado 11
+    expression      ir al estado 12
+
+
+Estado 7
+
+   22 expression: TOKEN_NUMBER •
+
+    $default  reduce usando la regla 22 (expression)
+
+
+Estado 8
+
+    0 $accept: program • $end
+    1 program: program • control block
+
+    $end         desplazar e ir al estado 21
+    TOKEN_IF     desplazar e ir al estado 22
+    TOKEN_ELSE   desplazar e ir al estado 23
+    TOKEN_FOR    desplazar e ir al estado 24
+    TOKEN_WHILE  desplazar e ir al estado 25
+
+    control  ir al estado 26
+
+
+Estado 9
+
+    2 program: block •
+
+    $default  reduce usando la regla 2 (program)
+
+
+Estado 10
+
+    3 block: statement_list •
+    5 statement_list: statement_list • TOKEN_LINEBREAK statement
+    6               | statement_list • TOKEN_LINEBREAK
+
+    TOKEN_LINEBREAK  desplazar e ir al estado 27
+
+    TOKEN_LINEBREAK  [reduce usando la regla 3 (block)]
+    $default         reduce usando la regla 3 (block)
+
+    shift/reduce conflict on token TOKEN_LINEBREAK:
+        3 block: statement_list •
+        5 statement_list: statement_list • TOKEN_LINEBREAK statement
+      Example: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON statement_list • TOKEN_LINEBREAK statement
+      Shift derivation
+        statement_list
+        ↳ 7: statement
+             ↳ 19: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+                                                                                                    ↳ 3: statement_list
+                                                                                                         ↳ 5: statement_list • TOKEN_LINEBREAK statement
+      Reduce derivation
+        statement_list
+        ↳ 5: statement_list                                                                                                    TOKEN_LINEBREAK statement
+             ↳ 7: statement
+                  ↳ 19: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+                                                                                                         ↳ 3: statement_list •
+
+    shift/reduce conflict on token TOKEN_LINEBREAK:
+        3 block: statement_list •
+        6 statement_list: statement_list • TOKEN_LINEBREAK
+      Example: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON statement_list • TOKEN_LINEBREAK
+      Shift derivation
+        statement_list
+        ↳ 7: statement
+             ↳ 19: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+                                                                                                    ↳ 3: statement_list
+                                                                                                         ↳ 6: statement_list • TOKEN_LINEBREAK
+      Reduce derivation
+        statement_list
+        ↳ 6: statement_list                                                                                                    TOKEN_LINEBREAK
+             ↳ 7: statement
+                  ↳ 19: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+                                                                                                         ↳ 3: statement_list •
+
+
+
+Estado 11
+
+    7 statement_list: statement •
+
+    $default  reduce usando la regla 7 (statement_list)
+
+
+Estado 12
+
+   21 statement: expression •
+   25 expression: expression • operator expression
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    $default  reduce usando la regla 21 (statement)
+
+    operator  ir al estado 40
+
+
+Estado 13
+
+   24 expression: TOKEN_IDENTIFIER •
+   26           | TOKEN_IDENTIFIER • TOKEN_LPAREN expression TOKEN_RPAREN
+
+    TOKEN_LPAREN  desplazar e ir al estado 16
+
+    $default  reduce usando la regla 24 (expression)
+
+
+Estado 14
+
+   25 expression: expression • operator expression
+   27           | TOKEN_NOT expression •
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    TOKEN_AND            [reduce usando la regla 27 (expression)]
+    TOKEN_OR             [reduce usando la regla 27 (expression)]
+    TOKEN_COMPARE        [reduce usando la regla 27 (expression)]
+    TOKEN_DIFFERENT      [reduce usando la regla 27 (expression)]
+    TOKEN_GREATER        [reduce usando la regla 27 (expression)]
+    TOKEN_LESS           [reduce usando la regla 27 (expression)]
+    TOKEN_LESS_EQUAL     [reduce usando la regla 27 (expression)]
+    TOKEN_GREATER_EQUAL  [reduce usando la regla 27 (expression)]
+    TOKEN_PLUS           [reduce usando la regla 27 (expression)]
+    TOKEN_MINUS          [reduce usando la regla 27 (expression)]
+    TOKEN_MULTIPLY       [reduce usando la regla 27 (expression)]
+    TOKEN_DIVIDE         [reduce usando la regla 27 (expression)]
+    $default             reduce usando la regla 27 (expression)
+
+    operator  ir al estado 40
+
+    shift/reduce conflict on token TOKEN_COMPARE:
+       27 expression: TOKEN_NOT expression •
+       29 operator: • TOKEN_COMPARE
+      Example: TOKEN_NOT expression • TOKEN_COMPARE expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator              expression
+                                         ↳ 29: • TOKEN_COMPARE
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator            expression
+              ↳ 27: TOKEN_NOT expression • ↳ 29: TOKEN_COMPARE
+
+    shift/reduce conflict on token TOKEN_DIFFERENT:
+       27 expression: TOKEN_NOT expression •
+       30 operator: • TOKEN_DIFFERENT
+      Example: TOKEN_NOT expression • TOKEN_DIFFERENT expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator                expression
+                                         ↳ 30: • TOKEN_DIFFERENT
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator              expression
+              ↳ 27: TOKEN_NOT expression • ↳ 30: TOKEN_DIFFERENT
+
+    shift/reduce conflict on token TOKEN_LESS:
+       27 expression: TOKEN_NOT expression •
+       31 operator: • TOKEN_LESS
+      Example: TOKEN_NOT expression • TOKEN_LESS expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator           expression
+                                         ↳ 31: • TOKEN_LESS
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator         expression
+              ↳ 27: TOKEN_NOT expression • ↳ 31: TOKEN_LESS
+
+    shift/reduce conflict on token TOKEN_GREATER:
+       27 expression: TOKEN_NOT expression •
+       32 operator: • TOKEN_GREATER
+      Example: TOKEN_NOT expression • TOKEN_GREATER expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator              expression
+                                         ↳ 32: • TOKEN_GREATER
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator            expression
+              ↳ 27: TOKEN_NOT expression • ↳ 32: TOKEN_GREATER
+
+    shift/reduce conflict on token TOKEN_LESS_EQUAL:
+       27 expression: TOKEN_NOT expression •
+       33 operator: • TOKEN_LESS_EQUAL
+      Example: TOKEN_NOT expression • TOKEN_LESS_EQUAL expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator                 expression
+                                         ↳ 33: • TOKEN_LESS_EQUAL
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator               expression
+              ↳ 27: TOKEN_NOT expression • ↳ 33: TOKEN_LESS_EQUAL
+
+    shift/reduce conflict on token TOKEN_GREATER_EQUAL:
+       27 expression: TOKEN_NOT expression •
+       34 operator: • TOKEN_GREATER_EQUAL
+      Example: TOKEN_NOT expression • TOKEN_GREATER_EQUAL expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator                    expression
+                                         ↳ 34: • TOKEN_GREATER_EQUAL
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator                  expression
+              ↳ 27: TOKEN_NOT expression • ↳ 34: TOKEN_GREATER_EQUAL
+
+    shift/reduce conflict on token TOKEN_AND:
+       27 expression: TOKEN_NOT expression •
+       35 operator: • TOKEN_AND
+      Example: TOKEN_NOT expression • TOKEN_AND expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator          expression
+                                         ↳ 35: • TOKEN_AND
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator        expression
+              ↳ 27: TOKEN_NOT expression • ↳ 35: TOKEN_AND
+
+    shift/reduce conflict on token TOKEN_OR:
+       27 expression: TOKEN_NOT expression •
+       36 operator: • TOKEN_OR
+      Example: TOKEN_NOT expression • TOKEN_OR expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator         expression
+                                         ↳ 36: • TOKEN_OR
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator       expression
+              ↳ 27: TOKEN_NOT expression • ↳ 36: TOKEN_OR
+
+    shift/reduce conflict on token TOKEN_PLUS:
+       27 expression: TOKEN_NOT expression •
+       37 operator: • TOKEN_PLUS
+      Example: TOKEN_NOT expression • TOKEN_PLUS expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator           expression
+                                         ↳ 37: • TOKEN_PLUS
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator         expression
+              ↳ 27: TOKEN_NOT expression • ↳ 37: TOKEN_PLUS
+
+    shift/reduce conflict on token TOKEN_MINUS:
+       27 expression: TOKEN_NOT expression •
+       38 operator: • TOKEN_MINUS
+      Example: TOKEN_NOT expression • TOKEN_MINUS expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator            expression
+                                         ↳ 38: • TOKEN_MINUS
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator          expression
+              ↳ 27: TOKEN_NOT expression • ↳ 38: TOKEN_MINUS
+
+    shift/reduce conflict on token TOKEN_MULTIPLY:
+       27 expression: TOKEN_NOT expression •
+       39 operator: • TOKEN_MULTIPLY
+      Example: TOKEN_NOT expression • TOKEN_MULTIPLY expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator               expression
+                                         ↳ 39: • TOKEN_MULTIPLY
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator             expression
+              ↳ 27: TOKEN_NOT expression • ↳ 39: TOKEN_MULTIPLY
+
+    shift/reduce conflict on token TOKEN_DIVIDE:
+       27 expression: TOKEN_NOT expression •
+       40 operator: • TOKEN_DIVIDE
+      Example: TOKEN_NOT expression • TOKEN_DIVIDE expression
+      Shift derivation
+        expression
+        ↳ 27: TOKEN_NOT expression
+                        ↳ 25: expression operator             expression
+                                         ↳ 40: • TOKEN_DIVIDE
+      Reduce derivation
+        expression
+        ↳ 25: expression                   operator           expression
+              ↳ 27: TOKEN_NOT expression • ↳ 40: TOKEN_DIVIDE
+
+
+
+Estado 15
+
+   18 statement: TOKEN_IDENTIFIER TOKEN_ASSIGN • expression
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 41
+
+
+Estado 16
+
+   26 expression: TOKEN_IDENTIFIER TOKEN_LPAREN • expression TOKEN_RPAREN
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 42
+
+
+Estado 17
+
+   16 statement: TOKEN_IDENTIFIER TOKEN_COLON • TOKEN_TYPE TOKEN_ASSIGN expression
+   17          | TOKEN_IDENTIFIER TOKEN_COLON • TOKEN_TYPE
+
+    TOKEN_TYPE  desplazar e ir al estado 43
+
+
+Estado 18
+
+   25 expression: expression • operator expression
+   28           | TOKEN_LPAREN expression • TOKEN_RPAREN
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_RPAREN         desplazar e ir al estado 44
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    operator  ir al estado 40
+
+
+Estado 19
+
+   19 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER • TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
+   20          | TOKEN_FUNC_DEF TOKEN_IDENTIFIER • TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+
+    TOKEN_LPAREN  desplazar e ir al estado 45
+
+
+Estado 20
+
+    4 block: TOKEN_INDENT statement_list • TOKEN_DEDENT
+    5 statement_list: statement_list • TOKEN_LINEBREAK statement
+    6               | statement_list • TOKEN_LINEBREAK
+
+    TOKEN_LINEBREAK  desplazar e ir al estado 27
+    TOKEN_DEDENT     desplazar e ir al estado 46
+
+
+Estado 21
+
+    0 $accept: program $end •
+
+    $default  aceptar
+
+
+Estado 22
+
+    8 control: TOKEN_IF • expression TOKEN_COLON
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 47
+
+
+Estado 23
+
+    9 control: TOKEN_ELSE • TOKEN_COLON
+
+    TOKEN_COLON  desplazar e ir al estado 48
+
+
+Estado 24
+
+   10 control: TOKEN_FOR • expression TOKEN_COLON
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 49
+
+
+Estado 25
+
+   11 control: TOKEN_WHILE • expression TOKEN_COLON
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 50
+
+
+Estado 26
+
+    1 program: program control • block
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 3
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_FUNC_DEF    desplazar e ir al estado 5
+    TOKEN_INDENT      desplazar e ir al estado 6
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    block           ir al estado 51
+    statement_list  ir al estado 10
+    statement       ir al estado 11
+    expression      ir al estado 12
+
+
+Estado 27
+
+    5 statement_list: statement_list TOKEN_LINEBREAK • statement
+    6               | statement_list TOKEN_LINEBREAK •
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 3
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_FUNC_DEF    desplazar e ir al estado 5
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    $default  reduce usando la regla 6 (statement_list)
+
+    statement   ir al estado 52
+    expression  ir al estado 12
+
+
+Estado 28
+
+   35 operator: TOKEN_AND •
+
+    $default  reduce usando la regla 35 (operator)
+
+
+Estado 29
+
+   36 operator: TOKEN_OR •
+
+    $default  reduce usando la regla 36 (operator)
+
+
+Estado 30
+
+   29 operator: TOKEN_COMPARE •
+
+    $default  reduce usando la regla 29 (operator)
+
+
+Estado 31
+
+   30 operator: TOKEN_DIFFERENT •
+
+    $default  reduce usando la regla 30 (operator)
+
+
+Estado 32
+
+   32 operator: TOKEN_GREATER •
+
+    $default  reduce usando la regla 32 (operator)
+
+
+Estado 33
+
+   31 operator: TOKEN_LESS •
+
+    $default  reduce usando la regla 31 (operator)
+
+
+Estado 34
+
+   33 operator: TOKEN_LESS_EQUAL •
+
+    $default  reduce usando la regla 33 (operator)
+
+
+Estado 35
+
+   34 operator: TOKEN_GREATER_EQUAL •
+
+    $default  reduce usando la regla 34 (operator)
+
+
+Estado 36
+
+   37 operator: TOKEN_PLUS •
+
+    $default  reduce usando la regla 37 (operator)
+
+
+Estado 37
+
+   38 operator: TOKEN_MINUS •
+
+    $default  reduce usando la regla 38 (operator)
+
+
+Estado 38
+
+   39 operator: TOKEN_MULTIPLY •
+
+    $default  reduce usando la regla 39 (operator)
+
+
+Estado 39
+
+   40 operator: TOKEN_DIVIDE •
+
+    $default  reduce usando la regla 40 (operator)
+
+
+Estado 40
+
+   25 expression: expression operator • expression
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 53
+
+
+Estado 41
+
+   18 statement: TOKEN_IDENTIFIER TOKEN_ASSIGN expression •
+   25 expression: expression • operator expression
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    $default  reduce usando la regla 18 (statement)
+
+    operator  ir al estado 40
+
+
+Estado 42
+
+   25 expression: expression • operator expression
+   26           | TOKEN_IDENTIFIER TOKEN_LPAREN expression • TOKEN_RPAREN
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_RPAREN         desplazar e ir al estado 54
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    operator  ir al estado 40
+
+
+Estado 43
+
+   16 statement: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE • TOKEN_ASSIGN expression
+   17          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE •
+
+    TOKEN_ASSIGN  desplazar e ir al estado 55
+
+    $default  reduce usando la regla 17 (statement)
+
+
+Estado 44
+
+   28 expression: TOKEN_LPAREN expression TOKEN_RPAREN •
+
+    $default  reduce usando la regla 28 (expression)
+
+
+Estado 45
+
+   19 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN • parameters TOKEN_RPAREN TOKEN_COLON block
+   20          | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN • parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+
+    TOKEN_IDENTIFIER  desplazar e ir al estado 56
+
+    parameters  ir al estado 57
+    parameter   ir al estado 58
+
+
+Estado 46
+
+    4 block: TOKEN_INDENT statement_list TOKEN_DEDENT •
+
+    $default  reduce usando la regla 4 (block)
+
+
+Estado 47
+
+    8 control: TOKEN_IF expression • TOKEN_COLON
+   25 expression: expression • operator expression
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+    TOKEN_COLON          desplazar e ir al estado 59
+
+    operator  ir al estado 40
+
+
+Estado 48
+
+    9 control: TOKEN_ELSE TOKEN_COLON •
+
+    $default  reduce usando la regla 9 (control)
+
+
+Estado 49
+
+   10 control: TOKEN_FOR expression • TOKEN_COLON
+   25 expression: expression • operator expression
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+    TOKEN_COLON          desplazar e ir al estado 60
+
+    operator  ir al estado 40
+
+
+Estado 50
+
+   11 control: TOKEN_WHILE expression • TOKEN_COLON
+   25 expression: expression • operator expression
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+    TOKEN_COLON          desplazar e ir al estado 61
+
+    operator  ir al estado 40
+
+
+Estado 51
+
+    1 program: program control block •
+
+    $default  reduce usando la regla 1 (program)
+
+
+Estado 52
+
+    5 statement_list: statement_list TOKEN_LINEBREAK statement •
+
+    $default  reduce usando la regla 5 (statement_list)
+
+
+Estado 53
+
+   25 expression: expression • operator expression
+   25           | expression operator expression •
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    TOKEN_AND            [reduce usando la regla 25 (expression)]
+    TOKEN_OR             [reduce usando la regla 25 (expression)]
+    TOKEN_COMPARE        [reduce usando la regla 25 (expression)]
+    TOKEN_DIFFERENT      [reduce usando la regla 25 (expression)]
+    TOKEN_GREATER        [reduce usando la regla 25 (expression)]
+    TOKEN_LESS           [reduce usando la regla 25 (expression)]
+    TOKEN_LESS_EQUAL     [reduce usando la regla 25 (expression)]
+    TOKEN_GREATER_EQUAL  [reduce usando la regla 25 (expression)]
+    TOKEN_PLUS           [reduce usando la regla 25 (expression)]
+    TOKEN_MINUS          [reduce usando la regla 25 (expression)]
+    TOKEN_MULTIPLY       [reduce usando la regla 25 (expression)]
+    TOKEN_DIVIDE         [reduce usando la regla 25 (expression)]
+    $default             reduce usando la regla 25 (expression)
+
+    operator  ir al estado 40
+
+    shift/reduce conflict on token TOKEN_COMPARE:
+       25 expression: expression operator expression •
+       29 operator: • TOKEN_COMPARE
+      Example: expression operator expression • TOKEN_COMPARE expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator              expression
+                                                   ↳ 29: • TOKEN_COMPARE
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator            expression
+              ↳ 25: expression operator expression • ↳ 29: TOKEN_COMPARE
+
+    shift/reduce conflict on token TOKEN_DIFFERENT:
+       25 expression: expression operator expression •
+       30 operator: • TOKEN_DIFFERENT
+      Example: expression operator expression • TOKEN_DIFFERENT expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator                expression
+                                                   ↳ 30: • TOKEN_DIFFERENT
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator              expression
+              ↳ 25: expression operator expression • ↳ 30: TOKEN_DIFFERENT
+
+    shift/reduce conflict on token TOKEN_LESS:
+       25 expression: expression operator expression •
+       31 operator: • TOKEN_LESS
+      Example: expression operator expression • TOKEN_LESS expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator           expression
+                                                   ↳ 31: • TOKEN_LESS
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator         expression
+              ↳ 25: expression operator expression • ↳ 31: TOKEN_LESS
+
+    shift/reduce conflict on token TOKEN_GREATER:
+       25 expression: expression operator expression •
+       32 operator: • TOKEN_GREATER
+      Example: expression operator expression • TOKEN_GREATER expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator              expression
+                                                   ↳ 32: • TOKEN_GREATER
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator            expression
+              ↳ 25: expression operator expression • ↳ 32: TOKEN_GREATER
+
+    shift/reduce conflict on token TOKEN_LESS_EQUAL:
+       25 expression: expression operator expression •
+       33 operator: • TOKEN_LESS_EQUAL
+      Example: expression operator expression • TOKEN_LESS_EQUAL expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator                 expression
+                                                   ↳ 33: • TOKEN_LESS_EQUAL
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator               expression
+              ↳ 25: expression operator expression • ↳ 33: TOKEN_LESS_EQUAL
+
+    shift/reduce conflict on token TOKEN_GREATER_EQUAL:
+       25 expression: expression operator expression •
+       34 operator: • TOKEN_GREATER_EQUAL
+      Example: expression operator expression • TOKEN_GREATER_EQUAL expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator                    expression
+                                                   ↳ 34: • TOKEN_GREATER_EQUAL
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator                  expression
+              ↳ 25: expression operator expression • ↳ 34: TOKEN_GREATER_EQUAL
+
+    shift/reduce conflict on token TOKEN_AND:
+       25 expression: expression operator expression •
+       35 operator: • TOKEN_AND
+      Example: expression operator expression • TOKEN_AND expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator          expression
+                                                   ↳ 35: • TOKEN_AND
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator        expression
+              ↳ 25: expression operator expression • ↳ 35: TOKEN_AND
+
+    shift/reduce conflict on token TOKEN_OR:
+       25 expression: expression operator expression •
+       36 operator: • TOKEN_OR
+      Example: expression operator expression • TOKEN_OR expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator         expression
+                                                   ↳ 36: • TOKEN_OR
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator       expression
+              ↳ 25: expression operator expression • ↳ 36: TOKEN_OR
+
+    shift/reduce conflict on token TOKEN_PLUS:
+       25 expression: expression operator expression •
+       37 operator: • TOKEN_PLUS
+      Example: expression operator expression • TOKEN_PLUS expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator           expression
+                                                   ↳ 37: • TOKEN_PLUS
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator         expression
+              ↳ 25: expression operator expression • ↳ 37: TOKEN_PLUS
+
+    shift/reduce conflict on token TOKEN_MINUS:
+       25 expression: expression operator expression •
+       38 operator: • TOKEN_MINUS
+      Example: expression operator expression • TOKEN_MINUS expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator            expression
+                                                   ↳ 38: • TOKEN_MINUS
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator          expression
+              ↳ 25: expression operator expression • ↳ 38: TOKEN_MINUS
+
+    shift/reduce conflict on token TOKEN_MULTIPLY:
+       25 expression: expression operator expression •
+       39 operator: • TOKEN_MULTIPLY
+      Example: expression operator expression • TOKEN_MULTIPLY expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator               expression
+                                                   ↳ 39: • TOKEN_MULTIPLY
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator             expression
+              ↳ 25: expression operator expression • ↳ 39: TOKEN_MULTIPLY
+
+    shift/reduce conflict on token TOKEN_DIVIDE:
+       25 expression: expression operator expression •
+       40 operator: • TOKEN_DIVIDE
+      Example: expression operator expression • TOKEN_DIVIDE expression
+      Shift derivation
+        expression
+        ↳ 25: expression operator expression
+                                  ↳ 25: expression operator             expression
+                                                   ↳ 40: • TOKEN_DIVIDE
+      Reduce derivation
+        expression
+        ↳ 25: expression                             operator           expression
+              ↳ 25: expression operator expression • ↳ 40: TOKEN_DIVIDE
+
+
+
+Estado 54
+
+   26 expression: TOKEN_IDENTIFIER TOKEN_LPAREN expression TOKEN_RPAREN •
+
+    $default  reduce usando la regla 26 (expression)
+
+
+Estado 55
+
+   16 statement: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN • expression
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 13
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    expression  ir al estado 62
+
+
+Estado 56
+
+   14 parameter: TOKEN_IDENTIFIER • TOKEN_COLON TOKEN_TYPE
+   15          | TOKEN_IDENTIFIER •
+
+    TOKEN_COLON  desplazar e ir al estado 63
+
+    $default  reduce usando la regla 15 (parameter)
+
+
+Estado 57
+
+   12 parameters: parameters • TOKEN_COMMA parameter
+   19 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters • TOKEN_RPAREN TOKEN_COLON block
+   20          | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters • TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+
+    TOKEN_RPAREN  desplazar e ir al estado 64
+    TOKEN_COMMA   desplazar e ir al estado 65
+
+
+Estado 58
+
+   13 parameters: parameter •
+
+    $default  reduce usando la regla 13 (parameters)
+
+
+Estado 59
+
+    8 control: TOKEN_IF expression TOKEN_COLON •
+
+    $default  reduce usando la regla 8 (control)
+
+
+Estado 60
+
+   10 control: TOKEN_FOR expression TOKEN_COLON •
+
+    $default  reduce usando la regla 10 (control)
+
+
+Estado 61
+
+   11 control: TOKEN_WHILE expression TOKEN_COLON •
+
+    $default  reduce usando la regla 11 (control)
+
+
+Estado 62
+
+   16 statement: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression •
+   25 expression: expression • operator expression
+
+    TOKEN_AND            desplazar e ir al estado 28
+    TOKEN_OR             desplazar e ir al estado 29
+    TOKEN_COMPARE        desplazar e ir al estado 30
+    TOKEN_DIFFERENT      desplazar e ir al estado 31
+    TOKEN_GREATER        desplazar e ir al estado 32
+    TOKEN_LESS           desplazar e ir al estado 33
+    TOKEN_LESS_EQUAL     desplazar e ir al estado 34
+    TOKEN_GREATER_EQUAL  desplazar e ir al estado 35
+    TOKEN_PLUS           desplazar e ir al estado 36
+    TOKEN_MINUS          desplazar e ir al estado 37
+    TOKEN_MULTIPLY       desplazar e ir al estado 38
+    TOKEN_DIVIDE         desplazar e ir al estado 39
+
+    $default  reduce usando la regla 16 (statement)
+
+    operator  ir al estado 40
+
+
+Estado 63
+
+   14 parameter: TOKEN_IDENTIFIER TOKEN_COLON • TOKEN_TYPE
+
+    TOKEN_TYPE  desplazar e ir al estado 66
+
+
+Estado 64
+
+   19 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN • TOKEN_COLON block
+   20          | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN • TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+
+    TOKEN_ARROW  desplazar e ir al estado 67
+    TOKEN_COLON  desplazar e ir al estado 68
+
+
+Estado 65
+
+   12 parameters: parameters TOKEN_COMMA • parameter
+
+    TOKEN_IDENTIFIER  desplazar e ir al estado 56
+
+    parameter  ir al estado 69
+
+
+Estado 66
+
+   14 parameter: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE •
+
+    $default  reduce usando la regla 14 (parameter)
+
+
+Estado 67
+
+   20 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW • TOKEN_TYPE TOKEN_COLON block
+
+    TOKEN_TYPE  desplazar e ir al estado 70
+
+
+Estado 68
+
+   19 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON • block
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 3
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_FUNC_DEF    desplazar e ir al estado 5
+    TOKEN_INDENT      desplazar e ir al estado 6
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    block           ir al estado 71
+    statement_list  ir al estado 10
+    statement       ir al estado 11
+    expression      ir al estado 12
+
+
+Estado 69
+
+   12 parameters: parameters TOKEN_COMMA parameter •
+
+    $default  reduce usando la regla 12 (parameters)
+
+
+Estado 70
+
+   20 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE • TOKEN_COLON block
+
+    TOKEN_COLON  desplazar e ir al estado 72
+
+
+Estado 71
+
+   19 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block •
+
+    $default  reduce usando la regla 19 (statement)
+
+
+Estado 72
+
+   20 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON • block
+
+    TOKEN_STRING      desplazar e ir al estado 1
+    TOKEN_NOT         desplazar e ir al estado 2
+    TOKEN_IDENTIFIER  desplazar e ir al estado 3
+    TOKEN_LPAREN      desplazar e ir al estado 4
+    TOKEN_FUNC_DEF    desplazar e ir al estado 5
+    TOKEN_INDENT      desplazar e ir al estado 6
+    TOKEN_NUMBER      desplazar e ir al estado 7
+
+    block           ir al estado 73
+    statement_list  ir al estado 10
+    statement       ir al estado 11
+    expression      ir al estado 12
+
+
+Estado 73
+
+   20 statement: TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block •
+
+    $default  reduce usando la regla 20 (statement)

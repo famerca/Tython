@@ -2,8 +2,8 @@ number1: Int = 10
 number2: Int = 20
 number3: Int
 
-if number1 > number2 :
+if number1 == number2 :
     print("number1 is greater than number2")
-else :
+else:
     number3 = number1 + number2
-    print("number3 is equal to number1 + number2")
+    print(number3)
