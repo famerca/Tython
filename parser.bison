@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-
+#define YYDEBUG 1
 extern int yylex();
 int yyerror(const char*);
 %}
@@ -18,27 +18,26 @@ int yyerror(const char*);
 
 // Regla principal
 program: 
-    program control block
-    | block
+    statement_list
     ;
 
 // Bloque de código (indentación)
 block: 
-    control block
-    | statement_list
-    | TOKEN_INDENT statement_list TOKEN_DEDENT
+    TOKEN_INDENT statement_list TOKEN_DEDENT
     ;
 
 // Lista de statements
 statement_list: 
     statement_list TOKEN_LINEBREAK statement
+    | statement_list TOKEN_LINEBREAK control block
+    | TOKEN_LINEBREAK statement_list 
     | statement_list TOKEN_LINEBREAK
     | statement
+    | control block
     ;
 
 control:
-      TOKEN_LINEBREAK control
-    | TOKEN_IF expression TOKEN_COLON
+      TOKEN_IF expression TOKEN_COLON
     | TOKEN_ELSE TOKEN_COLON
     | TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression TOKEN_COLON
     | TOKEN_WHILE expression TOKEN_COLON

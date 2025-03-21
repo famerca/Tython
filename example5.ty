@@ -1,0 +1,9 @@
+max: Int = 10
+str: String = "Hello "
+
+def print_multiple(number: Int, str: String):
+    number = number - 1
+    if(5 > number):
+        print(str)
+
+print_multiple(max, str)

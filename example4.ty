@@ -1,9 +1,9 @@
-max: Int = 10
-str: String = "Hello "
+num1: Int = 10
+num2: Int = 20
 
-def print_multiple(number: Int, str: String):
-    number = number - 1
-    if(5 > number):
-        print(str)
-
-print_multiple(max, str)
+if num1 > num2 :
+    num1 = num1 - num2
+    print("aqui reste")
+    
+    if(num1 > 0):
+        print("num1 is greater than 0")
