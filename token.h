@@ -58,8 +58,8 @@ extern int yydebug;
     TOKEN_NOT = 259,               /* TOKEN_NOT  */
     TOKEN_AND = 260,               /* TOKEN_AND  */
     TOKEN_OR = 261,                /* TOKEN_OR  */
-    TOKEN_TAB = 262,               /* TOKEN_TAB  */
-    TOKEN_BICOND = 263,            /* TOKEN_BICOND  */
+    TOKEN_BREAK = 262,             /* TOKEN_BREAK  */
+    TOKEN_IN = 263,                /* TOKEN_IN  */
     TOKEN_ASSIGN = 264,            /* TOKEN_ASSIGN  */
     TOKEN_IDENTIFIER = 265,        /* TOKEN_IDENTIFIER  */
     TOKEN_LPAREN = 266,            /* TOKEN_LPAREN  */

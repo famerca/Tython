@@ -6,7 +6,7 @@ int yyerror(const char*);
 %}
 
 // Token declarations
-%token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_TAB TOKEN_BICOND
+%token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_BREAK TOKEN_IN
 %token TOKEN_ASSIGN TOKEN_IDENTIFIER TOKEN_LPAREN TOKEN_RPAREN TOKEN_ARROW
 %token TOKEN_COMPARE TOKEN_DIFFERENT TOKEN_IF TOKEN_ELSE TOKEN_FOR
 %token TOKEN_WHILE TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_GREATER TOKEN_LESS
@@ -24,7 +24,8 @@ program:
 
 // Bloque de código (indentación)
 block: 
-      statement_list
+    control block
+    | statement_list
     | TOKEN_INDENT statement_list TOKEN_DEDENT
     ;
 
@@ -36,9 +37,10 @@ statement_list:
     ;
 
 control:
-    TOKEN_IF expression TOKEN_COLON
+      TOKEN_LINEBREAK control
+    | TOKEN_IF expression TOKEN_COLON
     | TOKEN_ELSE TOKEN_COLON
-    | TOKEN_FOR expression TOKEN_COLON
+    | TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression TOKEN_COLON
     | TOKEN_WHILE expression TOKEN_COLON
     ;
 
@@ -52,12 +54,20 @@ parameter:
     | TOKEN_IDENTIFIER
     ;
 
+arguments:
+    arguments TOKEN_COMMA expression
+    | expression
+    ;
+
 statement:
        TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression
     |  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE
     |  TOKEN_IDENTIFIER TOKEN_ASSIGN expression
     |  TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block
     |  TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block
+    |  TOKEN_RETURN expression
+    |  TOKEN_BREAK
+    |  TOKEN_RETURN
     |  expression
     ;
 
@@ -66,7 +76,7 @@ expression:
     | TOKEN_STRING
     | TOKEN_IDENTIFIER
     | expression operator expression
-    | TOKEN_IDENTIFIER TOKEN_LPAREN expression TOKEN_RPAREN
+    | TOKEN_IDENTIFIER TOKEN_LPAREN arguments TOKEN_RPAREN
     | TOKEN_NOT expression
     | TOKEN_LPAREN expression TOKEN_RPAREN
     ;

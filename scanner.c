@@ -811,9 +811,9 @@ YY_RULE_SETUP
 {
     // Si hay una reducción en la indentación (salto de línea sin espacios)
     if (current_indent > 0) {
-        int dedent_levels = current_indent;
-        current_indent = 0;  // Volver al nivel base de indentación
-        for (int i = 0; i < dedent_levels; i++) {
+        while (current_indent > 0) {
+            //printf("current_indent: %d\n", current_indent);
+            --current_indent;
             return TOKEN_DEDENT;
         }
     }

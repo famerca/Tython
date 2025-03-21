@@ -1,6 +1,10 @@
 variable: String = "Hello World"
 
-def print_hello(name: String) -> Any:
+def print_hello(name: String):
     print("Hello " + name)
 
-print_hello("World")
+def return_hello(name: String):
+    return "Hello " + name
+
+variable = return_hello("World")
+print_hello(variable)
