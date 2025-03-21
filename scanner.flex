@@ -3,6 +3,7 @@
 
 int current_indent = 0;  // Nivel de indentación actual
 int new_indent = 0;      // Nivel de indentación en la nueva línea
+int pending_break = 0;   // Indica si hay un salto de línea pendiente
 
 %}
 
@@ -37,13 +38,20 @@ TYPE        Int|Float|String|Any
 \n {
     // Si hay una reducción en la indentación (salto de línea sin espacios)
     if (current_indent > 0) {
+
+        printf("current_indent: %d\n pending_break: %d\n", current_indent, pending_break);
+        pending_break = 1;
+    
         while (current_indent > 0) {
-            //printf("current_indent: %d\n", current_indent);
             --current_indent;
+        
             return TOKEN_DEDENT;
         }
-    }
+
+    } 
+    
     return TOKEN_LINEBREAK;
+    
 }
 
 {SPACE}   { /* ignore */ }
