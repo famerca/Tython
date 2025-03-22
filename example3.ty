@@ -3,7 +3,7 @@ variable: String = "Hello World"
 def print_hello(name: String):
     print("Hello " + name)
 
-def return_hello(name: String):
+def return_hello(name: String) -> String:
     return "Hello " + name
 
 variable = return_hello("World")
