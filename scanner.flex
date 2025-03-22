@@ -18,7 +18,7 @@ TYPE        Int|Float|String|Any
 
 \n("    ")+ {
     new_indent = (yyleng - 1) / 4;  // Restamos 1 para ignorar el \n
-    printf("leng: %d, new_indent: %d, current_indent: %d\n", yyleng, new_indent, current_indent);
+    //printf("leng: %d, new_indent: %d, current_indent: %d\n", yyleng, new_indent, current_indent);
     if (new_indent > current_indent) {
         current_indent = new_indent;
         return TOKEN_INDENT;
@@ -36,7 +36,7 @@ TYPE        Int|Float|String|Any
 
 \n {
     // Si hay una reducción en la indentación (salto de línea sin espacios)
-    printf("current_indent: %d\n", current_indent);
+    //printf("current_indent: %d\n", current_indent);
     // Si hay una reducción en la indentación (salto de línea sin espacios)
     if (current_indent > 0) {
         yyless(0);  

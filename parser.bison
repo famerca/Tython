@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#define YYDEBUG 1
+#define YYDEBUG 0
 extern int yylex();
 int yyerror(const char*);
 %}
@@ -19,6 +19,7 @@ int yyerror(const char*);
 // Regla principal
 program: 
     statement_list
+    | statement_list linebreaks
     ;
 
 // Bloque de código (indentación)
