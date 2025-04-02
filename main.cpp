@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ast.hpp"
+
 extern FILE* yyin;
 extern int yyparse();
+extern Ast* ast;
 //extern int yydebug;
 
 void usage(char* argv[])
@@ -30,7 +33,8 @@ int main(int argc, char* argv[])
 
     if (result == 0)
     {
-        printf("Parse successful!\n");
+        //printf("Parse successful!\n\n\n\n");
+        ast->toDot(std::cout);
     }
     else
     {

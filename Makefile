@@ -19,8 +19,8 @@ scanner.o: token.h scanner.c
 scanner.c: scanner.flex
 	$(FLEX) -o scanner.c scanner.flex
 
-main.o: token.h main.c
-	$(CXX) -c main.c
+main.o: token.h main.cpp
+	$(CXX) -c main.cpp
 
 .PHONY:
 clean:
