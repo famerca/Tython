@@ -1,10 +1,12 @@
 %code requires {
     #include "ast.hpp"
+    #include <string>
 }
 
 %union {
 
     Ast* astNode;
+    
 }
 
 %{
@@ -37,7 +39,7 @@ Ast* ast = NULL;
 %left TOKEN_MULTIPLY TOKEN_DIVIDE
 //%nonassoc UMINUS
 
-%type<astNode> program statement_list statement control block linebreaks
+%type<astNode> program statement_list statement control block linebreaks expression
 
 %%
 
@@ -121,10 +123,11 @@ arguments:
 
 statement:
        TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
-           $$ = new Ast("Statement Definition");
+           $$ = new Declaration("", "", $5);
+
        }
     |  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Ast("Statement Definition");
+        $$ = new Declaration("", "");
     }
     |  TOKEN_IDENTIFIER TOKEN_ASSIGN expression{
         $$ = new Ast("Statement Assignment");
@@ -143,8 +146,12 @@ statement:
     ;
 
 expression:
-      TOKEN_NUMBER
-    | TOKEN_STRING
+      TOKEN_NUMBER {
+          $$ = new Expression("", "Int");
+      }
+    | TOKEN_STRING{
+        $$ = new Expression("", "String");
+    }
     | TOKEN_IDENTIFIER
     | expression operator expression
     | TOKEN_IDENTIFIER TOKEN_LPAREN arguments TOKEN_RPAREN

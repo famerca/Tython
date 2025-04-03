@@ -5,7 +5,8 @@
 #ifndef AST_HPP
 #define AST_HPP
 
-class Ast {
+class Ast 
+{
     public:
         std::string label;
         std::vector<Ast*> children;
@@ -39,6 +40,42 @@ class Ast {
             generateDot(out, counter);
             out << "}" << std::endl;
         }
-    };
+};
+
+
+class Statement: public Ast {
+    public:
+         Statement(std::string label) : Ast("stat") {
+            this->label = this->label + ": " + label;
+        }
+};
+
+class Expression: public Statement {
+    public:
+        std::string value;
+        std::string type;
+
+        Expression(std::string v, std::string t) : Statement("expression") {
+            value = v;
+            type = t;
+        }
+};
+
+class Declaration: public Statement{
+    public:
+        std::string identifier;
+        std::string type;
+        Ast* value = nullptr;
+        
+        Declaration(std::string i, std::string t, Ast * v = nullptr ) : Statement("Declaration") 
+        {
+            this->identifier = i;
+            this->type = t;
+            this->value = v;
+        }
+     
+};
+
+
     
 #endif
