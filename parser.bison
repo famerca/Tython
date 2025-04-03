@@ -123,7 +123,8 @@ arguments:
 
 statement:
        TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
-           $$ = new Declaration("", "", $5);
+           $$ = new Declaration("", "");
+           $$->addChild($5);
 
        }
     |  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{

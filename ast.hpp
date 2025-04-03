@@ -65,13 +65,12 @@ class Declaration: public Statement{
     public:
         std::string identifier;
         std::string type;
-        Ast* value = nullptr;
         
-        Declaration(std::string i, std::string t, Ast * v = nullptr ) : Statement("Declaration") 
+        Declaration(std::string i, std::string t ) : Statement("Declaration") 
         {
             this->identifier = i;
             this->type = t;
-            this->value = v;
+   
         }
      
 };
