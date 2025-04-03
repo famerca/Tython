@@ -82,13 +82,12 @@ statement_list:
         $$ = new Ast("Statements");
         $$->addChild($1);
     }
-    | statement_list TOKEN_LINEBREAK{
-        $$ = new Ast("Statements");
-        $$->addChild($1);
+    | statement_list TOKEN_LINEBREAK statement{
+        $1->addChild($3);
+        $$ = $1;
     }
-    | statement TOKEN_LINEBREAK statement_list{
-        $3->addChild($1);
-        $$ = $3;
+    | statement_list TOKEN_LINEBREAK{
+        $$ = $1; 
     }
     ;
 
