@@ -1,23 +1,49 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="Statements"]
-  node2 [label="stat: If"]
-  node3 [label="Compare"]
+  node2 [label="Function Definition"]
+  node3 [label="Parameters"]
+  node4 [label="Parameter Typed"]
+  node3 -> node4;
+  node5 [label="Parameter Typed"]
+  node3 -> node5;
   node2 -> node3;
-  node4 [label="Block"]
-  node5 [label="Statements"]
-  node6 [label="Function Call"]
-  node5 -> node6;
-  node7 [label="Statement Assignment"]
-  node5 -> node7;
+  node6 [label="Statements"]
+  node7 [label="For "]
   node8 [label="Function Call"]
-  node5 -> node8;
-  node4 -> node5;
-  node2 -> node4;
-  node1 -> node2;
-  node9 [label="stat: Declaration"]
-  node10 [label="String"]
+  node9 [label="Arguments"]
+  node10 [label="Identifier"]
   node9 -> node10;
-  node1 -> node9;
+  node8 -> node9;
+  node7 -> node8;
+  node11 [label="Block"]
+  node12 [label="Statements"]
+  node13 [label="Function Call"]
+  node14 [label="Arguments"]
+  node15 [label="Identifier"]
+  node14 -> node15;
+  node16 [label="String"]
+  node14 -> node16;
+  node17 [label="Identifier"]
+  node14 -> node17;
+  node13 -> node14;
+  node12 -> node13;
+  node11 -> node12;
+  node7 -> node11;
+  node6 -> node7;
+  node2 -> node6;
+  node1 -> node2;
+  node18 [label="stat: Declaration"]
+  node19 [label="Number"]
+  node18 -> node19;
+  node1 -> node18;
+  node20 [label="Function Call"]
+  node21 [label="Arguments"]
+  node22 [label="Identifier"]
+  node21 -> node22;
+  node23 [label="String"]
+  node21 -> node23;
+  node20 -> node21;
+  node1 -> node20;
   node0 -> node1;
 }

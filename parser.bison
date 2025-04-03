@@ -12,7 +12,7 @@
 %{
 #include <stdio.h>
 #include "ast.hpp"
-#define YYDEBUG 0
+#define YYDEBUG 1
 
 extern int yylex();
 int yyerror(const char*);
@@ -31,7 +31,6 @@ Ast* ast = NULL;
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
 %token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
 
-
 %left TOKEN_IF TOKEN_ELSE TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK
 %left TOKEN_OR
 %left TOKEN_AND
@@ -49,7 +48,7 @@ Ast* ast = NULL;
 %nonassoc UMINUS
 
 %type<astNode> program statement_list statement block expression declaration assignment definition parameters parameter arguments function_call
-%type<astNode> stmt_if term
+%type<astNode> stmt_if term stmt_else stmt_for stmt_while
 %%
 
 // Regla principal
@@ -73,6 +72,9 @@ block:
     TOKEN_INDENT statement_list TOKEN_DEDENT{
         $$ = new Ast("Block");
         $$->addChild($2);
+    }
+    |  TOKEN_INDENT statement_list TOKEN_DEDENT TOKEN_LINEBREAK{
+        $$ = $2;
     }
     ;
 
@@ -102,6 +104,12 @@ statement:
     stmt_if {
         $$ = $1;
     }
+    | stmt_for {
+        $$ = $1;
+    }
+    | stmt_while {
+        $$ = $1;
+    }
     | declaration {
         $$ = $1;
     }
@@ -118,16 +126,29 @@ statement:
     ;
 
 stmt_if:
-      TOKEN_IF expression TOKEN_COLON block {
-        $$ = new Statement("If");
+    TOKEN_IF expression TOKEN_COLON block stmt_else { 
+        $$ = new Statement($5 ? "If Else" : "If");
         $$->addChild($2);
         $$->addChild($4);
-      }
-    | TOKEN_IF expression TOKEN_COLON block TOKEN_ELSE TOKEN_COLON block  %prec TOKEN_IF { 
-        $$ = new Statement("If Else");
+        if ($5) $$->addChild($5);
+    };
+
+stmt_else:
+    TOKEN_ELSE TOKEN_COLON block { $$ = $3; }
+    | %empty { $$ = nullptr; };
+
+stmt_for:
+    TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression TOKEN_COLON block{
+        $$ = new Ast("For ");
+        $$->addChild($4);
+        $$->addChild($6);
+    }
+
+stmt_while:
+    TOKEN_WHILE expression TOKEN_COLON block{
+        $$ = new Ast("While");
         $$->addChild($2);
         $$->addChild($4);
-        $$->addChild($7);
     }
 
 declaration:
@@ -149,29 +170,54 @@ assignment:
 definition:
     TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block{
         $$ = new Ast("Function Definition");
+        $$->addChild($4);
+        $$->addChild($7);
     }
     | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block{
-        $$ = new Ast("Function Definition");
+        $$ = new Ast("Function Definition Typed");
+        $$->addChild($4);
+        $$->addChild($9);
     }
     ;
 
 parameters:
     parameters TOKEN_COMMA parameter
-    | parameter
+    {
+        $1->addChild($3);
+        $$ = $1;
+    }
+    | parameter{
+        $$ = new Ast("Parameters");
+        $$->addChild($1);
+    }
     ;
 
 parameter:
-      TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE
-    | TOKEN_IDENTIFIER
+      TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
+        $$ = new Ast("Parameter Typed");
+      }
+    | TOKEN_IDENTIFIER{
+        $$ = new Ast("Parameter");
+    }
     ;
 
 arguments:
     arguments TOKEN_COMMA expression
-    | expression
+    {
+        $1->addChild($3);
+        $$ = $1;
+    }
+    | expression{
+        $$ = new Ast("Arguments");
+        $$->addChild($1);
+    }
     ;
 
 function_call:
-    TOKEN_IDENTIFIER TOKEN_LPAREN arguments TOKEN_RPAREN
+    TOKEN_IDENTIFIER TOKEN_LPAREN arguments TOKEN_RPAREN {
+        $$ = new Ast("Function Call");
+        $$->addChild($3);
+    }
     ;
 
 expression:
@@ -221,7 +267,7 @@ expression:
         $$ = new Expression("", "");
     }
     | function_call {
-        $$ = new Ast("Function Call");
+        $$ = $1;
     }
     | term {
         $$ = $1;
@@ -241,6 +287,8 @@ term :
     ;
 
 %%
+
+
 
 int yyerror(const char* s)
 {
