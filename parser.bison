@@ -31,7 +31,11 @@ Ast* ast = NULL;
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
 %token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
 
-%left TOKEN_IF TOKEN_ELSE TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK
+%left TOKEN_IF TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc TOKEN_ELSE
+
 %left TOKEN_OR
 %left TOKEN_AND
 %right TOKEN_NOT
@@ -69,14 +73,15 @@ program:
 
 // Bloque de código (indentación)
 block: 
-    TOKEN_INDENT statement_list TOKEN_DEDENT{
+    TOKEN_COLON TOKEN_INDENT statement_list TOKEN_DEDENT {
         $$ = new Ast("Block");
-        $$->addChild($2);
+        $$->addChild($3);
     }
-    /* |  TOKEN_INDENT statement_list TOKEN_DEDENT TOKEN_LINEBREAK{
-        $$ = $2;
-    } */
-    ;
+    | TOKEN_COLON TOKEN_INDENT statement_list TOKEN_DEDENT TOKEN_LINEBREAK {
+        $$ = new Ast("Block");
+        $$->addChild($3);
+    }
+;
 
 // Lista de statements
 statement_list: 
@@ -136,29 +141,37 @@ statement:
     ;
 
 stmt_if:
-    TOKEN_IF expression TOKEN_COLON block stmt_else { 
-        $$ = new Statement($5 ? "If Else" : "If");
+    TOKEN_IF expression block %prec LOWER_THAN_ELSE {
+        $$ = new Statement("If");
         $$->addChild($2);
-        $$->addChild($4);
-        if ($5) $$->addChild($5);
-    };
+        $$->addChild($3);
+    }
+    | TOKEN_IF expression block TOKEN_ELSE block {
+        $$ = new Statement("If Else");
+        $$->addChild($2);
+        $$->addChild($3);
+        $$->addChild($5);
+    }
+;
+
 
 stmt_else:
-    TOKEN_LINEBREAK TOKEN_ELSE TOKEN_COLON block { $$ = $4; }
+    TOKEN_LINEBREAK TOKEN_ELSE block { $$ = $3; }
     | %empty { $$ = nullptr; };
 
+
 stmt_for:
-    TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression TOKEN_COLON block{
+    TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
         $$ = new Ast("For ");
         $$->addChild($4);
-        $$->addChild($6);
+        $$->addChild($5);
     }
 
 stmt_while:
-    TOKEN_WHILE expression TOKEN_COLON block{
+    TOKEN_WHILE expression  block{
         $$ = new Ast("While");
         $$->addChild($2);
-        $$->addChild($4);
+        $$->addChild($3);
     }
 
 declaration:
@@ -178,15 +191,15 @@ assignment:
     ;
 
 definition:
-    TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_COLON block{
+    TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN  block{
         $$ = new Ast("Function Definition");
         $$->addChild($4);
-        $$->addChild($7);
+        $$->addChild($6);
     }
-    | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE TOKEN_COLON block{
+    | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE  block{
         $$ = new Ast("Function Definition Typed");
         $$->addChild($4);
-        $$->addChild($9);
+        $$->addChild($8);
     }
     ;
 
