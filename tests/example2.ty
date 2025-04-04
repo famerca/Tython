@@ -6,4 +6,5 @@ if number1 == number2 :
     print("number1 is greater than number2")
 else:
     number3 = number1 + number2 / 2 * 5
+    
     print(number3)

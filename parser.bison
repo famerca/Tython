@@ -73,9 +73,9 @@ block:
         $$ = new Ast("Block");
         $$->addChild($2);
     }
-    |  TOKEN_INDENT statement_list TOKEN_DEDENT TOKEN_LINEBREAK{
+    /* |  TOKEN_INDENT statement_list TOKEN_DEDENT TOKEN_LINEBREAK{
         $$ = $2;
-    }
+    } */
     ;
 
 // Lista de statements
@@ -119,10 +119,20 @@ statement:
     | definition{
         $$ = $1;
     }
-    |  TOKEN_RETURN expression
-    |  TOKEN_BREAK
+    |  TOKEN_RETURN expression {
+        $$ = new Ast("return");
+        $$->addChild($2);
+    }
+    |  TOKEN_BREAK {
+        $$ = new Ast("break");
+    }
     |  TOKEN_RETURN
-    |  expression
+    {
+        $$ = new Ast("return");
+    }
+    |  expression {
+        $$ = $1;
+    }
     ;
 
 stmt_if:
@@ -134,7 +144,7 @@ stmt_if:
     };
 
 stmt_else:
-    TOKEN_ELSE TOKEN_COLON block { $$ = $3; }
+    TOKEN_LINEBREAK TOKEN_ELSE TOKEN_COLON block { $$ = $4; }
     | %empty { $$ = nullptr; };
 
 stmt_for:

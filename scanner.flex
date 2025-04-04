@@ -3,7 +3,7 @@
 
 int current_indent = 0;  // Nivel de indentación actual
 int new_indent = 0;      // Nivel de indentación en la nueva línea
-
+int saw_linebreak = 0;
 %}
 
 SPACE      [ \t\n]
@@ -30,7 +30,11 @@ TYPE        Int|Float|String|Any
             return TOKEN_DEDENT;
         }
     } else {
-        return TOKEN_LINEBREAK;
+        if(!saw_linebreak)
+        {
+            saw_linebreak = 1;
+            return TOKEN_LINEBREAK;
+        }
     }
 }
 
@@ -44,9 +48,14 @@ TYPE        Int|Float|String|Any
         return TOKEN_DEDENT;  // Devolver un TOKEN_DEDENT
         
     }
-    return TOKEN_LINEBREAK;
-    
+
+    if(!saw_linebreak)
+    {
+        saw_linebreak = 1;
+        return TOKEN_LINEBREAK;
+    }
 }
+
 
 {SPACE}   { /* ignore */ }
 "="          { return TOKEN_ASSIGN; }
@@ -65,20 +74,20 @@ TYPE        Int|Float|String|Any
 "<="         { return TOKEN_LESS_EQUAL; }
 ">="         { return TOKEN_GREATER_EQUAL; }
 "("          { return TOKEN_LPAREN; }
-")"          { return TOKEN_RPAREN; }
-":"         { return TOKEN_COLON; }
+")"          { saw_linebreak = 0; return TOKEN_RPAREN; }
+":"         { saw_linebreak = 0; return TOKEN_COLON; }
 ","          { return TOKEN_COMMA; }
 "AND"       { return TOKEN_AND; }
 "OR"        { return TOKEN_OR; }
 "NOT"       { return TOKEN_NOT; }
 {TYPE}       { return TOKEN_TYPE; }
-{IDENTIFIER} { return TOKEN_IDENTIFIER; }
-{TEXT}       { return TOKEN_STRING; }
+{IDENTIFIER} { saw_linebreak = 0; return TOKEN_IDENTIFIER; }
+{TEXT}       { saw_linebreak = 0; return TOKEN_STRING; }
 "+"         { return TOKEN_PLUS; }
 "-"         { return TOKEN_MINUS; }
 "*"         { return TOKEN_MULTIPLY; }
 "/"         { return TOKEN_DIVIDE; }
-{NUMBER}    { return TOKEN_NUMBER; }
+{NUMBER}    { saw_linebreak = 0; return TOKEN_NUMBER; }
 <<EOF>> {
 
     if(current_indent > 0) {
