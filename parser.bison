@@ -31,10 +31,7 @@ Ast* ast = NULL;
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
 %token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
 
-%left TOKEN_IF TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK
-
-%nonassoc LOWER_THAN_ELSE
-%nonassoc TOKEN_ELSE
+%left TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK TOKEN_ELSE TOKEN_IF
 
 %left TOKEN_OR
 %left TOKEN_AND
@@ -77,10 +74,6 @@ block:
         $$ = new Ast("Block");
         $$->addChild($3);
     }
-    | TOKEN_COLON TOKEN_INDENT statement_list TOKEN_DEDENT TOKEN_LINEBREAK {
-        $$ = new Ast("Block");
-        $$->addChild($3);
-    }
 ;
 
 // Lista de statements
@@ -107,6 +100,9 @@ statement_list:
 
 statement:
     stmt_if {
+        $$ = $1;
+    }
+    | stmt_else {
         $$ = $1;
     }
     | stmt_for {
@@ -141,24 +137,19 @@ statement:
     ;
 
 stmt_if:
-    TOKEN_IF expression block %prec LOWER_THAN_ELSE {
+    TOKEN_IF expression block{
         $$ = new Statement("If");
         $$->addChild($2);
         $$->addChild($3);
     }
-    | TOKEN_IF expression block TOKEN_ELSE block {
-        $$ = new Statement("If Else");
-        $$->addChild($2);
-        $$->addChild($3);
-        $$->addChild($5);
-    }
 ;
 
-
 stmt_else:
-    TOKEN_LINEBREAK TOKEN_ELSE block { $$ = $3; }
-    | %empty { $$ = nullptr; };
-
+    TOKEN_ELSE block { 
+        $$ = new Statement("Else");
+        $$->addChild($2);
+     }
+    /* | %empty { $$ = nullptr; }; */
 
 stmt_for:
     TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
@@ -168,7 +159,7 @@ stmt_for:
     }
 
 stmt_while:
-    TOKEN_WHILE expression  block{
+    TOKEN_WHILE expression block{
         $$ = new Ast("While");
         $$->addChild($2);
         $$->addChild($3);

@@ -26,10 +26,12 @@ TYPE        Int|Float|String|Any
         // Emitir TOKEN_DEDENT por cada nivel de indentación que se cierra
         int dedent_levels = current_indent - new_indent;
         current_indent = new_indent;
+        yyless(0);  // Eliminar el TOKEN_INDENT
         for (int i = 0; i < dedent_levels; i++) {
             return TOKEN_DEDENT;
         }
     } else {
+        //printf("salto de linea");
         if(!saw_linebreak)
         {
             saw_linebreak = 1;
@@ -40,7 +42,7 @@ TYPE        Int|Float|String|Any
 
 \n {
     // Si hay una reducción en la indentación (salto de línea sin espacios)
-    //printf("current_indent: %d\n", current_indent);
+    //printf("salto de linea capturado");
     // Si hay una reducción en la indentación (salto de línea sin espacios)
     if (current_indent > 0) {
         yyless(0);  

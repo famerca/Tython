@@ -1,0 +1,7 @@
+limit: Int = 5
+
+if cond != 0:
+    while limit > 0:
+        limit = limit - 1
+else:
+    print("limite debe ser mayor que 0")
