@@ -1,39 +1,51 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="Statements"]
-  node2 [label="stat: Declaration"]
-  node3 [label="Number"]
+  node2 [label="Function Definition"]
+  node3 [label="Parameters"]
+  node4 [label="Parameter Typed"]
+  node3 -> node4;
   node2 -> node3;
-  node1 -> node2;
-  node4 [label="stat: If"]
-  node5 [label="Different"]
-  node4 -> node5;
-  node6 [label="Block"]
-  node7 [label="Statements"]
-  node8 [label="While"]
-  node9 [label="Greater"]
-  node8 -> node9;
-  node10 [label="Block"]
-  node11 [label="Statements"]
-  node12 [label="Statement Assignment"]
-  node11 -> node12;
-  node10 -> node11;
-  node8 -> node10;
+  node5 [label="Block"]
+  node6 [label="Statements"]
+  node7 [label="stat: If Else"]
+  node8 [label="Different"]
   node7 -> node8;
-  node6 -> node7;
-  node4 -> node6;
-  node1 -> node4;
-  node13 [label="stat: Else"]
-  node14 [label="Block"]
-  node15 [label="Statements"]
-  node16 [label="Function Call"]
-  node17 [label="Arguments"]
-  node18 [label="String"]
-  node17 -> node18;
-  node16 -> node17;
-  node15 -> node16;
+  node9 [label="Block"]
+  node10 [label="Statements"]
+  node11 [label="While"]
+  node12 [label="Greater"]
+  node11 -> node12;
+  node13 [label="Block"]
+  node14 [label="Statements"]
+  node15 [label="Statement Assignment"]
   node14 -> node15;
   node13 -> node14;
-  node1 -> node13;
+  node11 -> node13;
+  node10 -> node11;
+  node9 -> node10;
+  node7 -> node9;
+  node16 [label="Block"]
+  node17 [label="Statements"]
+  node18 [label="Function Call"]
+  node19 [label="Arguments"]
+  node20 [label="String"]
+  node19 -> node20;
+  node18 -> node19;
+  node17 -> node18;
+  node21 [label="Statement Assignment"]
+  node17 -> node21;
+  node16 -> node17;
+  node7 -> node16;
+  node6 -> node7;
+  node5 -> node6;
+  node2 -> node5;
+  node1 -> node2;
+  node22 [label="Function Call"]
+  node23 [label="Arguments"]
+  node24 [label="Number"]
+  node23 -> node24;
+  node22 -> node23;
+  node1 -> node22;
   node0 -> node1;
 }

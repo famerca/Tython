@@ -4,6 +4,8 @@
 int current_indent = 0;  // Nivel de indentación actual
 int new_indent = 0;      // Nivel de indentación en la nueva línea
 int saw_linebreak = 0;
+int pending_linebreak = 0;
+
 %}
 
 SPACE      [ \t\n]
@@ -21,22 +23,20 @@ TYPE        Int|Float|String|Any
     //printf("leng: %d, new_indent: %d, current_indent: %d\n", yyleng, new_indent, current_indent);
     if (new_indent > current_indent) {
         current_indent = new_indent;
+        pending_linebreak = 0;
+        saw_linebreak = 0;
         return TOKEN_INDENT;
     } else if (new_indent < current_indent) {
         // Emitir TOKEN_DEDENT por cada nivel de indentación que se cierra
-        int dedent_levels = current_indent - new_indent;
-        current_indent = new_indent;
-        yyless(0);  // Eliminar el TOKEN_INDENT
-        for (int i = 0; i < dedent_levels; i++) {
-            return TOKEN_DEDENT;
-        }
-    } else {
-        //printf("salto de linea");
-        if(!saw_linebreak)
-        {
-            saw_linebreak = 1;
-            return TOKEN_LINEBREAK;
-        }
+        --current_indent;
+        pending_linebreak = 1;
+        yyless(0);
+        return TOKEN_DEDENT;
+        
+    }else if(saw_linebreak == 0 && pending_linebreak == 0)
+    {
+        saw_linebreak = 1;
+        return TOKEN_LINEBREAK;
     }
 }
 
@@ -47,11 +47,12 @@ TYPE        Int|Float|String|Any
     if (current_indent > 0) {
         yyless(0);  
         --current_indent;  // Reducir la indentación en uno
+        pending_linebreak = 1;
         return TOKEN_DEDENT;  // Devolver un TOKEN_DEDENT
         
     }
 
-    if(!saw_linebreak)
+    if(!saw_linebreak && !pending_linebreak)
     {
         saw_linebreak = 1;
         return TOKEN_LINEBREAK;
@@ -61,11 +62,43 @@ TYPE        Int|Float|String|Any
 
 {SPACE}   { /* ignore */ }
 "="          { return TOKEN_ASSIGN; }
-"if"          { return TOKEN_IF; }
+"if"          {     
+                    if(pending_linebreak)
+                    {
+                        yyless(0); 
+                        pending_linebreak = 0;
+                        return TOKEN_LINEBREAK;
+                    } 
+                    return TOKEN_IF; 
+              }
 "else"        { return TOKEN_ELSE; }
-"for"         { return TOKEN_FOR; }
-"while"       { return TOKEN_WHILE; }
-"def"         { return TOKEN_FUNC_DEF; }
+"for"         { 
+                if(pending_linebreak)
+                    {
+                        yyless(0); 
+                        pending_linebreak = 0;
+                        return TOKEN_LINEBREAK;
+                    } 
+                return TOKEN_FOR;
+              }
+"while"       { 
+                    if(pending_linebreak)
+                    {
+                        yyless(0); 
+                        pending_linebreak = 0;
+                        return TOKEN_LINEBREAK;
+                    } 
+                    return TOKEN_WHILE;
+             }
+"def"         { 
+                if(pending_linebreak)
+                    {
+                        yyless(0); 
+                        pending_linebreak = 0;
+                        return TOKEN_LINEBREAK;
+                    } 
+                return TOKEN_FUNC_DEF; 
+              }
 "return"      { return TOKEN_RETURN; }
 "in"          { return TOKEN_IN; }
 "->"         { return TOKEN_ARROW; }
@@ -81,9 +114,26 @@ TYPE        Int|Float|String|Any
 ","          { return TOKEN_COMMA; }
 "AND"       { return TOKEN_AND; }
 "OR"        { return TOKEN_OR; }
-"NOT"       { return TOKEN_NOT; }
+"NOT"       { 
+                if(pending_linebreak)
+                    {
+                        yyless(0); 
+                        pending_linebreak = 0;
+                        return TOKEN_LINEBREAK;
+                    } 
+                return TOKEN_NOT; 
+             }
 {TYPE}       { return TOKEN_TYPE; }
-{IDENTIFIER} { saw_linebreak = 0; return TOKEN_IDENTIFIER; }
+{IDENTIFIER} {     
+                if(pending_linebreak)
+                {
+                    yyless(0); 
+                    pending_linebreak = 0;
+                    return TOKEN_LINEBREAK;
+                }
+                saw_linebreak = 0; 
+                return TOKEN_IDENTIFIER;
+            }
 {TEXT}       { saw_linebreak = 0; return TOKEN_STRING; }
 "+"         { return TOKEN_PLUS; }
 "-"         { return TOKEN_MINUS; }

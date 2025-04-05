@@ -31,13 +31,17 @@ Ast* ast = NULL;
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
 %token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
 
-%left TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK TOKEN_ELSE TOKEN_IF
+%left TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK  TOKEN_IF
 
 %left TOKEN_OR
 %left TOKEN_AND
 %right TOKEN_NOT
 
 %nonassoc TOKEN_COMPARE TOKEN_DIFFERENT TOKEN_GREATER TOKEN_LESS TOKEN_LESS_EQUAL TOKEN_GREATER_EQUAL
+
+// Precedencia para resolver if-else
+%nonassoc LOWER_THAN_ELSE
+%nonassoc TOKEN_ELSE
 
 %right TOKEN_ASSIGN
 
@@ -65,6 +69,10 @@ program:
         $$ = new Ast("Root");
         $$->addChild($1);
 
+    }|
+    TOKEN_LINEBREAK statement_list {
+        $$ = new Ast("Root");
+        $$->addChild($2);
     }
     ;
 
@@ -102,9 +110,6 @@ statement:
     stmt_if {
         $$ = $1;
     }
-    | stmt_else {
-        $$ = $1;
-    }
     | stmt_for {
         $$ = $1;
     }
@@ -137,19 +142,18 @@ statement:
     ;
 
 stmt_if:
-    TOKEN_IF expression block{
+    TOKEN_IF expression block %prec LOWER_THAN_ELSE{
         $$ = new Statement("If");
         $$->addChild($2);
         $$->addChild($3);
     }
-;
-
-stmt_else:
-    TOKEN_ELSE block { 
-        $$ = new Statement("Else");
+    | TOKEN_IF expression block TOKEN_ELSE block{
+        $$ = new Statement("If Else");
         $$->addChild($2);
-     }
-    /* | %empty { $$ = nullptr; }; */
+        $$->addChild($3);
+        $$->addChild($5);
+    }
+;
 
 stmt_for:
     TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
