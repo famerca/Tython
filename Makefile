@@ -5,7 +5,7 @@ BISON = bison -Wcounterexamples --defines=token.h
 all: validator
 
 validator: parser.o scanner.o main.o
-	$(CXX) scanner.o parser.o main.o -o validator.out
+	$(CXX) scanner.o parser.o main.o -o parser.out
 
 parser.o: parser.c
 	$(CXX) -c parser.c
@@ -24,4 +24,4 @@ main.o: token.h main.cpp
 
 .PHONY:
 clean:
-	$(RM) *.o parser.c parser.output token.h scanner.c validator
+	$(RM) *.o parser.c parser.output token.h scanner.c parser.out
