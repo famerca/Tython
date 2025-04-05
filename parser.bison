@@ -182,9 +182,11 @@ declaration:
     TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
         $$ = new Ast("Declaration : " + *$3 );
         $$->addChild($5);
+        delete $3;
     }
     | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
         $$ = new Ast("Declaration : " + *$3 );
+        delete $3;
     }
     ;
 
@@ -204,6 +206,7 @@ definition:
         $$ = new Ast("Function --> " +  *$7);
         $$->addChild($4);
         $$->addChild($8);
+        delete $7;
     }
     ;
 
@@ -222,6 +225,7 @@ parameters:
 parameter:
       TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
         $$ = new Ast("Parameter : " + *$3);
+        delete $3;
       }
     | TOKEN_IDENTIFIER{
         $$ = new Ast("Parameter");
@@ -304,12 +308,15 @@ expression:
 term :
     TOKEN_NUMBER {
         $$ = new Ast("Number : " + *$1);
+        delete $1;
     }
     | TOKEN_STRING {
         $$ = new Ast("String: " + reemplazarComillas(*$1) );
+        delete $1;
     }
     | TOKEN_IDENTIFIER {
         $$ = new Ast("Identifier : " + *$1);
+        delete $1;
     }
     ;
 
