@@ -14,7 +14,7 @@
 #include "ast.hpp"
 #include <string>
 #include <algorithm>
-#define YYDEBUG 1
+#define YYDEBUG 0
 
 extern int yylex();
 int yyerror(const char*);
