@@ -123,7 +123,9 @@ TYPE        Int|Float|String|Any
                     } 
                 return TOKEN_NOT; 
              }
-{TYPE}       { return TOKEN_TYPE; }
+{TYPE}       {  yylval.str = new std::string(yytext);
+                return TOKEN_TYPE; 
+             }
 {IDENTIFIER} {     
                 if(pending_linebreak)
                 {
@@ -132,14 +134,23 @@ TYPE        Int|Float|String|Any
                     return TOKEN_LINEBREAK;
                 }
                 saw_linebreak = 0; 
+                yylval.str = new std::string(yytext);
                 return TOKEN_IDENTIFIER;
             }
-{TEXT}       { saw_linebreak = 0; return TOKEN_STRING; }
+{TEXT}       { 
+                saw_linebreak = 0; 
+                yylval.str = new std::string(yytext);
+                return TOKEN_STRING;
+             }
 "+"         { return TOKEN_PLUS; }
 "-"         { return TOKEN_MINUS; }
 "*"         { return TOKEN_MULTIPLY; }
 "/"         { return TOKEN_DIVIDE; }
-{NUMBER}    { saw_linebreak = 0; return TOKEN_NUMBER; }
+{NUMBER}    { 
+                saw_linebreak = 0; 
+                yylval.str = new std::string(yytext);
+                return TOKEN_NUMBER;
+             }
 <<EOF>> {
 
     if(current_indent > 0) {

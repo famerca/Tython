@@ -6,18 +6,26 @@
 %union {
 
     Ast* astNode;
-    
+    std::string* str;
 }
 
 %{
 #include <stdio.h>
 #include "ast.hpp"
+#include <string>
+#include <algorithm>
 #define YYDEBUG 1
 
 extern int yylex();
 int yyerror(const char*);
 
 Ast* ast = NULL;
+
+std::string reemplazarComillas(const std::string& texto) {
+    std::string resultado = texto;
+    std::replace(resultado.begin(), resultado.end(), '\"', '\'');
+    return resultado;
+}
 
 
 %}
@@ -53,7 +61,8 @@ Ast* ast = NULL;
 %nonassoc UMINUS
 
 %type<astNode> program statement_list statement block expression declaration assignment definition parameters parameter arguments function_call
-%type<astNode> stmt_if term stmt_else stmt_for stmt_while
+%type<astNode> stmt_if term stmt_for stmt_while
+%type<str> TOKEN_STRING TOKEN_IDENTIFIER TOKEN_TYPE TOKEN_NUMBER
 %%
 
 // Regla principal
@@ -171,11 +180,11 @@ stmt_while:
 
 declaration:
     TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
-        $$ = new Declaration("", "");
+        $$ = new Ast("Declaration : " + *$3 );
         $$->addChild($5);
     }
     | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Declaration("", "");
+        $$ = new Ast("Declaration : " + *$3 );
     }
     ;
 
@@ -192,7 +201,7 @@ definition:
         $$->addChild($6);
     }
     | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE  block{
-        $$ = new Ast("Function Definition Typed");
+        $$ = new Ast("Function --> " +  *$7);
         $$->addChild($4);
         $$->addChild($8);
     }
@@ -212,7 +221,7 @@ parameters:
 
 parameter:
       TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Ast("Parameter Typed");
+        $$ = new Ast("Parameter : " + *$3);
       }
     | TOKEN_IDENTIFIER{
         $$ = new Ast("Parameter");
@@ -294,13 +303,13 @@ expression:
 
 term :
     TOKEN_NUMBER {
-        $$ = new Ast("Number");
+        $$ = new Ast("Number : " + *$1);
     }
     | TOKEN_STRING {
-        $$ = new Ast("String");
+        $$ = new Ast("String: " + reemplazarComillas(*$1) );
     }
     | TOKEN_IDENTIFIER {
-        $$ = new Ast("Identifier");
+        $$ = new Ast("Identifier : " + *$1);
     }
     ;
 
