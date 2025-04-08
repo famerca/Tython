@@ -75,6 +75,24 @@ class Declaration: public Statement{
      
 };
 
+class Number: public Ast {
+    public:
+        std::string value;
+        std::string type;
+        Number(std::string v);
+};
 
+class String: public Expression
+{
+    public:
+        String(std::string v) : Expression(v, "String") {}
+};
+
+class Identifier: public Ast
+{
+    public:
+        std::string value;
+        Identifier(std::string v);
+};
     
 #endif

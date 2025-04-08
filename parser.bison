@@ -11,13 +11,17 @@
 
 %{
 #include <stdio.h>
-#include "ast.hpp"
 #include <string>
 #include <algorithm>
+#include "ast.hpp"
+#include "error.hpp"
+
 #define YYDEBUG 1
 
 extern int yylex();
-int yyerror(const char*);
+
+void yyerror(const char*);
+extern int yylineno; 
 
 Ast* ast = NULL;
 
@@ -29,6 +33,9 @@ std::string reemplazarComillas(const std::string& texto) {
 
 
 %}
+
+%locations
+%define parse.error verbose
 
 // Token declarations
 %token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_BREAK TOKEN_IN
@@ -303,13 +310,13 @@ expression:
 
 term :
     TOKEN_NUMBER {
-        $$ = new Ast("Number : " + *$1);
+        $$ = new Number(*$1);
     }
     | TOKEN_STRING {
-        $$ = new Ast("String: " + reemplazarComillas(*$1) );
+        $$ = new String(*$1);
     }
     | TOKEN_IDENTIFIER {
-        $$ = new Ast("Identifier : " + *$1);
+        $$ = new Identifier(*$1);
     }
     ;
 
@@ -317,8 +324,8 @@ term :
 
 
 
-int yyerror(const char* s)
+void yyerror(const char* s)
 {
-    printf("Parse error: %s\n", s);
-    return 1;
+    fprintf(stderr, "Line %d: %s\n", yylineno, s);
+
 }
