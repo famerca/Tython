@@ -14,13 +14,13 @@
 #include <string>
 #include <algorithm>
 #include "ast.hpp"
-#include "error.hpp"
 
-#define YYDEBUG 1
+//#define YYDEBUG 1
 
 extern int yylex();
 
 void yyerror(const char*);
+
 extern int yylineno; 
 
 Ast* ast = NULL;
@@ -283,16 +283,28 @@ expression:
           $$ = new Ast("Or");
     }
     | expression TOKEN_PLUS expression{
-        $$ = new Ast("Plus");
+        $$ = new Sum(yylineno);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_MINUS expression{
-        $$ = new Ast("Minus");
+        $$ = new Sub(yylineno);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_MULTIPLY expression{
-        $$ = new Ast("Multiply");
+        $$ = new Mul(yylineno);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_DIVIDE expression{
-        $$ = new Ast("Divide");
+        $$ = new Div(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | TOKEN_NOT expression {
         $$ = new Expression("", "");

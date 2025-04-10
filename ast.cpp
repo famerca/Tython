@@ -76,3 +76,16 @@ void Aritmetic::validate()
 
     }
 }
+
+void Div::validate()
+{
+    Aritmetic::validate();
+
+    Expression* right = dynamic_cast<Expression*>(children[1]);
+
+    if(right->value == "0")
+    {
+        sem_error("Division by 0 not allowed", this->line);
+    }
+
+}

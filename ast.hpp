@@ -42,6 +42,8 @@ class Ast
             generateDot(out, counter);
             out << "}" << std::endl;
         }
+
+        virtual void validate() {}
 };
 
 
@@ -65,7 +67,6 @@ class Declaration: public Statement{
         }
      
 };
-
 
 class Expression: public Ast {
 
@@ -106,5 +107,32 @@ class Aritmetic: public Expression
         Aritmetic(std::string op, int l) : Expression(op, "Int", l) {}
         void validate() override;
 };
+
+class Sum: public Aritmetic
+{
+    public:
+        Sum(int l) : Aritmetic("+", l) {}
+};
+
+class Sub: public Aritmetic
+{
+    public:
+        Sub(int l) : Aritmetic("-", l) {}
+};
+
+class Mul: public Aritmetic
+{
+    public:
+        Mul(int l) : Aritmetic("*", l) {}
+};
+
+class Div: public Aritmetic
+{
+    public:
+        Div(int l) : Aritmetic("/", l) {}
+    
+    void validate() override;
+};
+
     
 #endif

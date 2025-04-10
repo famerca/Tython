@@ -6,7 +6,7 @@
 extern FILE* yyin;
 extern int yyparse();
 extern Ast* ast;
-extern int yydebug;
+//extern int yydebug;
 
 void usage(char* argv[])
 {
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
         printf("Could not open %s\n", argv[1]);
         exit(1);
     }
-    yydebug = 1;
+    //yydebug = 1;
     int result = yyparse();
 
     if (result == 0)
