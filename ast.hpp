@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 
+#include "error.hpp"
 #ifndef AST_HPP
 #define AST_HPP
 
@@ -10,10 +11,11 @@ class Ast
     public:
         std::string label;
         std::vector<Ast*> children;
+        int line;
         
-        Ast(std::string label) : label(label) {}
+        Ast(std::string label) : label(label), line(0) {}
         
-        ~Ast() {
+        virtual ~Ast() {
             for (Ast* child : children) {
                 //std::cout << "Destruyendo el hijo: " << child->label << std::endl;
                 delete child;
@@ -50,17 +52,6 @@ class Statement: public Ast {
         }
 };
 
-class Expression: public Statement {
-    public:
-        std::string value;
-        std::string type;
-
-        Expression(std::string v, std::string t) : Statement("expression") {
-            value = v;
-            type = t;
-        }
-};
-
 class Declaration: public Statement{
     public:
         std::string identifier;
@@ -75,10 +66,25 @@ class Declaration: public Statement{
      
 };
 
-class Number: public Ast {
+
+class Expression: public Ast {
+
     public:
         std::string value;
         std::string type;
+
+        Expression(std::string v, std::string t, int l = 0) : Ast("expression") {
+            value = v;
+            type = t;
+            line = l;
+        }
+        
+        virtual void validate();
+
+};
+
+class Number: public Expression {
+    public:
         Number(std::string v);
 };
 
@@ -88,11 +94,17 @@ class String: public Expression
         String(std::string v) : Expression(v, "String") {}
 };
 
-class Identifier: public Ast
+class Identifier: public Expression
 {
     public:
-        std::string value;
-        Identifier(std::string v);
+        Identifier(std::string v, std::string t = "Any") : Expression(v, t) {}
+};
+
+class Aritmetic: public Expression
+{
+    public:
+        Aritmetic(std::string op, int l) : Expression(op, "Int", l) {}
+        void validate() override;
 };
     
 #endif
