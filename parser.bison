@@ -259,43 +259,67 @@ expression:
         $$ = $2;
     }
     | expression TOKEN_COMPARE expression{
-        $$ = new Ast("Compare");
+        $$ = new Compare(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_DIFFERENT expression{
-        $$ = new Ast("Different");
+        $$ = new Diff(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_LESS expression{
-        $$ = new Ast("Less");
+        $$ = new Less(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_LESS_EQUAL expression{
-        $$ = new Ast("LessEqual");
+        $$ = new LessE(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_GREATER expression{
-        $$ = new Ast("Greater");
+        $$ = new Greater(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_GREATER_EQUAL expression{
-        $$ = new Ast("GreaterEqual");
+        $$ = new GreaterE(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_AND expression{
-         $$ = new Ast("And");
+        $$ = new And(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     |  expression TOKEN_OR expression{
-          $$ = new Ast("Or");
+        $$ = new Or(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+        $$->validate();
     }
     | expression TOKEN_PLUS expression{
-        $$ = new Sum(yylineno);
+        $$ = new Sum(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
         $$->validate();
     }
     | expression TOKEN_MINUS expression{
-        $$ = new Sub(yylineno);
+        $$ = new Sub(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
         $$->validate();
     }
     | expression TOKEN_MULTIPLY expression{
-        $$ = new Mul(yylineno);
+        $$ = new Mul(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
         $$->validate();
@@ -307,10 +331,14 @@ expression:
         $$->validate();
     }
     | TOKEN_NOT expression {
-        $$ = new Expression("", "");
+        $$ = new Or(@1.first_line);
+        $$->addChild($2);
+        $$->validate();
     }
     | TOKEN_MINUS expression %prec UMINUS {
-        $$ = new Expression("", "");
+        $$ = new Uminus(@1.first_line);
+        $$->addChild($2);
+        $$->validate();
     }
     | function_call {
         $$ = $1;

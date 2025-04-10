@@ -92,26 +92,36 @@ class Number: public Expression {
 class String: public Expression
 {
     public:
-        String(std::string v) : Expression(v, "String") {}
+        String(std::string v) : Expression(v, "String") {
+            this->label = "String: " + v;
+        }
 };
 
 class Identifier: public Expression
 {
     public:
-        Identifier(std::string v, std::string t = "Any") : Expression(v, t) {}
+        Identifier(std::string v, std::string t = "Any") : Expression(v, t) 
+        {
+            this->label = "Identifier: " + v;
+        }
 };
 
 class Aritmetic: public Expression
 {
     public:
-        Aritmetic(std::string op, int l) : Expression(op, "Int", l) {}
+        Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
+            this->label = op + ": Int";
+        }
         void validate() override;
 };
 
 class Sum: public Aritmetic
 {
     public:
-        Sum(int l) : Aritmetic("+", l) {}
+        Sum(int l) : Aritmetic("+", l) 
+        {
+            //std::cout << "Creando suma";
+        }
 };
 
 class Sub: public Aritmetic
@@ -134,5 +144,122 @@ class Div: public Aritmetic
     void validate() override;
 };
 
+class Uminus: public Aritmetic
+{
+    public:
+        Uminus(int l): Aritmetic("uminus", l){}
+
+    void validate() override;
+};
+
+class BooleanExp: public Expression
+{
+    public:
+        BooleanExp(std::string op, int l) : Expression(op, "Bool" ,l)
+        {
+            label = op + ": Bool"; 
+        }
+
+    void validate() override;
+};
+
+class And: public BooleanExp
+{
+    public:
+        And(int l) : BooleanExp("AND", l) {}
+        
+};
+
+class Or: public BooleanExp
+{
+    public:
+        Or(int l): BooleanExp("OR", l) {}
+};
+
+class Not: public BooleanExp
+{
+    public:
+        Not(int l): BooleanExp("Not", l) {}
+
+    void validate() override;
+};
+
+class LogicExp: public Expression
+{
+    public:
+        LogicExp(std::string op, int l) : Expression(op, "Bool", l) {}
+
+        void validateNaN();
+        void validateNum();
+};
+
+class Compare: public LogicExp
+{
+
+    public:
+        Compare(int l): LogicExp("==", l) {}
+
+        void validate() override 
+        {
+            LogicExp::validateNaN();
+        }
+};
+
+class Diff: public LogicExp
+{
+    public:
+        Diff(int l): LogicExp("!=", l) {}
+        
+        void validate() override
+        {
+            LogicExp::validateNaN();
+        }
+
+};
+
+class Greater: public LogicExp
+{
+    public:
+        Greater(int l): LogicExp(">", l) {}
+
+        void validate() override
+        {
+            LogicExp::validateNum();
+        }
+};
     
+class GreaterE: public LogicExp
+{
+    public:
+        GreaterE(int l): LogicExp(">=", l) {}
+
+        void validate() override
+        {
+            LogicExp::validateNum();
+        }
+};
+
+class Less: public LogicExp
+{
+    public:
+        Less(int l): LogicExp("<", l) {}
+
+        void validate() override
+        {
+            LogicExp::validateNum();
+        }
+        
+};
+
+class LessE: public LogicExp
+{
+    public:
+        LessE(int l): LogicExp("<=", l) {}
+
+        void validate() override
+        {
+            LogicExp::validateNum();
+        }
+};
+
 #endif

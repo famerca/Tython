@@ -1,47 +1,21 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="Statements"]
-  node2 [label="Declaration : String"]
-  node3 [label="String: 'Hello World'"]
+  node2 [label="Declaration : Bool"]
+  node3 [label="OR: Bool"]
+  node4 [label="expression"]
+  node5 [label="String: 'QK'"]
+  node4 -> node5;
+  node6 [label="String: 'qk'"]
+  node4 -> node6;
+  node3 -> node4;
+  node7 [label="+: Int"]
+  node8 [label="number: 0"]
+  node7 -> node8;
+  node9 [label="number: 5"]
+  node7 -> node9;
+  node3 -> node7;
   node2 -> node3;
   node1 -> node2;
-  node4 [label="Function Definition"]
-  node5 [label="Parameters"]
-  node6 [label="Parameter : String"]
-  node5 -> node6;
-  node4 -> node5;
-  node7 [label="Block"]
-  node8 [label="Statements"]
-  node9 [label="Function Call"]
-  node10 [label="Arguments"]
-  node11 [label="Plus"]
-  node10 -> node11;
-  node9 -> node10;
-  node8 -> node9;
-  node7 -> node8;
-  node4 -> node7;
-  node1 -> node4;
-  node12 [label="Function --> String"]
-  node13 [label="Parameters"]
-  node14 [label="Parameter : String"]
-  node13 -> node14;
-  node12 -> node13;
-  node15 [label="Block"]
-  node16 [label="Statements"]
-  node17 [label="return"]
-  node18 [label="Plus"]
-  node17 -> node18;
-  node16 -> node17;
-  node15 -> node16;
-  node12 -> node15;
-  node1 -> node12;
-  node19 [label="Statement Assignment"]
-  node1 -> node19;
-  node20 [label="Function Call"]
-  node21 [label="Arguments"]
-  node22 [label="Identifier : variable"]
-  node21 -> node22;
-  node20 -> node21;
-  node1 -> node20;
   node0 -> node1;
 }
