@@ -1,21 +1,88 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="Statements"]
-  node2 [label="Declaration : Bool"]
-  node3 [label="OR: Bool"]
-  node4 [label="expression"]
-  node5 [label="String: 'QK'"]
-  node4 -> node5;
-  node6 [label="String: 'qk'"]
-  node4 -> node6;
-  node3 -> node4;
-  node7 [label="+: Int"]
-  node8 [label="number: 0"]
-  node7 -> node8;
-  node9 [label="number: 5"]
-  node7 -> node9;
-  node3 -> node7;
+  node2 [label="Declaration : Int"]
+  node3 [label="number: 10"]
   node2 -> node3;
   node1 -> node2;
+  node4 [label="Declaration : Int"]
+  node5 [label="number: 20"]
+  node4 -> node5;
+  node1 -> node4;
+  node6 [label="Declaration : Int"]
+  node1 -> node6;
+  node7 [label="stat: If Else"]
+  node8 [label="expression"]
+  node9 [label="Identifier: number1"]
+  node8 -> node9;
+  node10 [label="Identifier: number2"]
+  node8 -> node10;
+  node7 -> node8;
+  node11 [label="Block"]
+  node12 [label="Statements"]
+  node13 [label="Function Call"]
+  node14 [label="Arguments"]
+  node15 [label="String: "number1 is greater than number2""]
+  node14 -> node15;
+  node13 -> node14;
+  node12 -> node13;
+  node11 -> node12;
+  node7 -> node11;
+  node16 [label="Block"]
+  node17 [label="Statements"]
+  node18 [label="Statement Assignment"]
+  node19 [label="+: Int"]
+  node20 [label="Identifier: number1"]
+  node19 -> node20;
+  node21 [label="*: Int"]
+  node22 [label="/: Int"]
+  node23 [label="Identifier: number2"]
+  node22 -> node23;
+  node24 [label="number: 2"]
+  node22 -> node24;
+  node21 -> node22;
+  node25 [label="number: 5"]
+  node21 -> node25;
+  node19 -> node21;
+  node18 -> node19;
+  node17 -> node18;
+  node26 [label="Function Call"]
+  node27 [label="Arguments"]
+  node28 [label="Identifier: number3"]
+  node27 -> node28;
+  node26 -> node27;
+  node17 -> node26;
+  node16 -> node17;
+  node7 -> node16;
+  node1 -> node7;
   node0 -> node1;
 }
+Node: Root
+Node: Statements
+Node: Declaration : Int
+Node: number: 10
+Node: Declaration : Int
+Node: number: 20
+Node: Declaration : Int
+Node: stat: If Else
+Node: expression
+Node: Identifier: number1
+Node: Identifier: number2
+Node: Block
+Node: Statements
+Node: Function Call
+Node: Arguments
+Node: String: "number1 is greater than number2"
+Node: Block
+Node: Statements
+Node: Statement Assignment
+Node: +: Int
+Node: Identifier: number1
+Node: *: Int
+Node: /: Int
+Node: Identifier: number2
+Node: number: 2
+Node: number: 5
+Node: Function Call
+Node: Arguments
+Node: Identifier: number3

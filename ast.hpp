@@ -1,10 +1,11 @@
+#ifndef AST_HPP
+#define AST_HPP
+
 #include <iostream>
 #include <vector>
 #include <string>
+#include "analysis.hpp"
 
-#include "error.hpp"
-#ifndef AST_HPP
-#define AST_HPP
 
 class Ast 
 {
@@ -12,14 +13,17 @@ class Ast
         std::string label;
         std::vector<Ast*> children;
         int line;
+        bool validated;
         
-        Ast(std::string label) : label(label), line(0) {}
+        Ast(std::string label) : label(label), line(0), validated(false) {}
         
         virtual ~Ast() {
+
             for (Ast* child : children) {
                 //std::cout << "Destruyendo el hijo: " << child->label << std::endl;
                 delete child;
             }
+            
         }
         
         void addChild(Ast* child) {
@@ -43,7 +47,10 @@ class Ast
             out << "}" << std::endl;
         }
 
-        virtual void validate() {}
+        virtual void validate(const SymbolTable& st) 
+        {
+            validated = true;
+        }
 };
 
 
@@ -54,17 +61,23 @@ class Statement: public Ast {
         }
 };
 
+class Block: public Ast {
+    public:
+        Block() : Ast("Block") 
+        {
+           // std::cout << "Creando un bloque" << std::endl;
+        }
+};
+
 class Declaration: public Statement{
     public:
-        std::string identifier;
+        std::string name;
         std::string type;
         
-        Declaration(std::string i, std::string t ) : Statement("Declaration") 
-        {
-            this->identifier = i;
-            this->type = t;
-   
-        }
+        Declaration(std::string i, std::string t ) : Statement("Declaration"), name(i), type(t)
+        {}
+
+        void validate(const SymbolTable& st) override;
      
 };
 
@@ -78,9 +91,10 @@ class Expression: public Ast {
             value = v;
             type = t;
             line = l;
+            //std::cout << "Creando una expresion:" << value << std::endl;
         }
         
-        virtual void validate();
+        virtual void validate(const SymbolTable& st);
 
 };
 
@@ -104,6 +118,8 @@ class Identifier: public Expression
         {
             this->label = "Identifier: " + v;
         }
+
+        void validate(const SymbolTable& st) override;
 };
 
 class Aritmetic: public Expression
@@ -112,7 +128,7 @@ class Aritmetic: public Expression
         Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
             this->label = op + ": Int";
         }
-        void validate() override;
+        void validate(const SymbolTable& st) override;
 };
 
 class Sum: public Aritmetic
@@ -141,7 +157,7 @@ class Div: public Aritmetic
     public:
         Div(int l) : Aritmetic("/", l) {}
     
-    void validate() override;
+    void validate(const SymbolTable& st) override;
 };
 
 class Uminus: public Aritmetic
@@ -149,7 +165,7 @@ class Uminus: public Aritmetic
     public:
         Uminus(int l): Aritmetic("uminus", l){}
 
-    void validate() override;
+    void validate(const SymbolTable& st) override;
 };
 
 class BooleanExp: public Expression
@@ -160,7 +176,7 @@ class BooleanExp: public Expression
             label = op + ": Bool"; 
         }
 
-    void validate() override;
+    void validate(const SymbolTable& st) override;
 };
 
 class And: public BooleanExp
@@ -181,7 +197,7 @@ class Not: public BooleanExp
     public:
         Not(int l): BooleanExp("Not", l) {}
 
-    void validate() override;
+    void validate(const SymbolTable& st) override;
 };
 
 class LogicExp: public Expression
@@ -189,8 +205,8 @@ class LogicExp: public Expression
     public:
         LogicExp(std::string op, int l) : Expression(op, "Bool", l) {}
 
-        void validateNaN();
-        void validateNum();
+        void validateNaN(const SymbolTable& st);
+        void validateNum(const SymbolTable& st);
 };
 
 class Compare: public LogicExp
@@ -199,9 +215,9 @@ class Compare: public LogicExp
     public:
         Compare(int l): LogicExp("==", l) {}
 
-        void validate() override 
+        void validate(const SymbolTable& st) override 
         {
-            LogicExp::validateNaN();
+            LogicExp::validateNaN(st);
         }
 };
 
@@ -210,9 +226,9 @@ class Diff: public LogicExp
     public:
         Diff(int l): LogicExp("!=", l) {}
         
-        void validate() override
+        void validate(const SymbolTable& st) override
         {
-            LogicExp::validateNaN();
+            LogicExp::validateNaN(st);
         }
 
 };
@@ -222,9 +238,9 @@ class Greater: public LogicExp
     public:
         Greater(int l): LogicExp(">", l) {}
 
-        void validate() override
+        void validate(const SymbolTable& st) override
         {
-            LogicExp::validateNum();
+            LogicExp::validateNum(st);
         }
 };
     
@@ -233,9 +249,9 @@ class GreaterE: public LogicExp
     public:
         GreaterE(int l): LogicExp(">=", l) {}
 
-        void validate() override
+        void validate(const SymbolTable& st) override
         {
-            LogicExp::validateNum();
+            LogicExp::validateNum(st);
         }
 };
 
@@ -244,9 +260,9 @@ class Less: public LogicExp
     public:
         Less(int l): LogicExp("<", l) {}
 
-        void validate() override
+        void validate(const SymbolTable& st) override
         {
-            LogicExp::validateNum();
+            LogicExp::validateNum(st);
         }
         
 };
@@ -256,9 +272,9 @@ class LessE: public LogicExp
     public:
         LessE(int l): LogicExp("<=", l) {}
 
-        void validate() override
+        void validate(const SymbolTable& st) override
         {
-            LogicExp::validateNum();
+            LogicExp::validateNum(st);
         }
 };
 

@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
     {
         //printf("Parse successful!\n\n\n\n");
         ast->toDot(std::cout);
+        Analysis analysis(ast);
     }
     else
     {

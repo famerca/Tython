@@ -95,7 +95,7 @@ program:
 // Bloque de código (indentación)
 block: 
     TOKEN_COLON TOKEN_INDENT statement_list TOKEN_DEDENT {
-        $$ = new Ast("Block");
+        $$ = new Block();
         $$->addChild($3);
     }
 ;
@@ -198,6 +198,7 @@ declaration:
 assignment:
     TOKEN_IDENTIFIER TOKEN_ASSIGN expression{
         $$ = new Ast("Statement Assignment");
+        $$->addChild($3);
     }
     ;
 
@@ -262,83 +263,83 @@ expression:
         $$ = new Compare(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+  
     }
     | expression TOKEN_DIFFERENT expression{
         $$ = new Diff(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+      
     }
     | expression TOKEN_LESS expression{
         $$ = new Less(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_LESS_EQUAL expression{
         $$ = new LessE(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_GREATER expression{
         $$ = new Greater(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_GREATER_EQUAL expression{
         $$ = new GreaterE(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_AND expression{
         $$ = new And(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     |  expression TOKEN_OR expression{
         $$ = new Or(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_PLUS expression{
         $$ = new Sum(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_MINUS expression{
         $$ = new Sub(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_MULTIPLY expression{
         $$ = new Mul(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | expression TOKEN_DIVIDE expression{
         $$ = new Div(@1.first_line);
         $$->addChild($1);
         $$->addChild($3);
-        $$->validate();
+
     }
     | TOKEN_NOT expression {
         $$ = new Or(@1.first_line);
         $$->addChild($2);
-        $$->validate();
+
     }
     | TOKEN_MINUS expression %prec UMINUS {
         $$ = new Uminus(@1.first_line);
         $$->addChild($2);
-        $$->validate();
+
     }
     | function_call {
         $$ = $1;

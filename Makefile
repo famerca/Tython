@@ -1,11 +1,11 @@
-CXX = g++
+CXX = g++ -std=c++17
 FLEX = flex
 BISON = bison -Wcounterexamples --defines=token.h
 
 all: parser
 
-parser: parser.o scanner.o main.o ast.o error.o
-	$(CXX) scanner.o parser.o ast.o main.o error.o -o parser.out
+parser: parser.o scanner.o main.o ast.o analysis.o symbolTable.o
+	$(CXX) scanner.o parser.o ast.o main.o analysis.o symbolTable.o -o parser.out
 
 parser.o: parser.c
 	$(CXX) -c parser.c
@@ -25,8 +25,11 @@ main.o: token.h main.cpp
 ast.o: ast.cpp
 	$(CXX) -c ast.cpp
 
-error.o: error.cpp
-	$(CXX) -c error.cpp
+analysis.o: analysis.cpp
+	$(CXX) -c analysis.cpp
+
+symbolTable.o: symbolTable.cpp
+	$(CXX) -c symbolTable.cpp
 
 .PHONY:
 clean:

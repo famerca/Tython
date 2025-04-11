@@ -1,5 +1,49 @@
 #include "ast.hpp"
 
+
+void Declaration::validate(const SymbolTable &st)
+{
+    if(validated)
+        return;
+    
+    if(children.size() > 1)
+    {
+        sem_error("Declaration can only have one expression", this->line);
+    }
+    if(children.size() == 1)
+    {
+        Expression* expr = dynamic_cast<Expression*>(children[0]);
+        expr->validate(st);
+
+        if(this->type != expr->type)
+        {
+            sem_error("Type mismatch in declaration", this->line);
+        }
+    }
+
+    validated = true;
+}
+
+void Identifier::validate(const SymbolTable &st)
+{
+    if(validated)
+        return;
+    
+    auto symbol = st.lookup(this->value);
+
+    if(symbol)
+    {
+        if(symbol->isFunction)
+            sem_error("Identifier cannot be used as function", this->line);
+        
+        this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
+    }
+    else
+        sem_error("Undeclared identifier: " + this->value, this->line);
+
+    validated = true;
+}
+
 Number::Number(std::string v) : Expression(v,"Int")
 {
     this->label = "number: " + v;
@@ -15,8 +59,11 @@ Number::Number(std::string v) : Expression(v,"Int")
 }
 
 
-void  Expression::validate()
+void  Expression::validate(const SymbolTable &st)
 {
+    if(validated)
+        return;
+
     Expression* left = dynamic_cast<Expression*>(children[0]);
     Expression* right = dynamic_cast<Expression*>(children[1]);
     
@@ -24,6 +71,9 @@ void  Expression::validate()
     {
         sem_error("Operaciones no permitidas", this->line);
     }
+
+    left->validate(st);
+    right->validate(st);
 
     if(left->type != right->type)
     {
@@ -33,10 +83,16 @@ void  Expression::validate()
         sem_error(error, this->line);
     }
 
+    validated = true;
+
 }
 
-void Aritmetic::validate()
+void Aritmetic::validate(const SymbolTable &st)
 {
+
+    if(validated)
+        return;
+    
     if(children.size() != 2)
     {
         sem_error("Operacion no permitida", this->line);
@@ -44,11 +100,17 @@ void Aritmetic::validate()
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
     Expression* right = dynamic_cast<Expression*>(children[1]);
+
+    // std::cout << "Validando aritmetic" << "left: " << left->type << "\n"
+    // << "right: " << right->type << "\n";
     
     if(left == nullptr || right == nullptr)
     {
         sem_error("Operaciones no permitidas", this->line);
     }
+
+    left->validate(st);
+    right->validate(st);
 
     if(left->type == "Bool" || right->type == "Bool")
     {
@@ -82,23 +144,32 @@ void Aritmetic::validate()
         }
 
     }
+
+     validated = true;
 }
 
-void Div::validate()
+void Div::validate(const SymbolTable &st)
 {
-    Aritmetic::validate();
+    if(validated)
+        return;
 
     Expression* right = dynamic_cast<Expression*>(children[1]);
+    right->validate(st);
 
     if(right->value == "0")
     {
         sem_error("Division by 0 not allowed", this->line);
     }
 
+    Aritmetic::validate(st);
+
 }
 
-void BooleanExp::validate()
+void BooleanExp::validate(const SymbolTable &st)
 {
+    if(validated)
+        return;
+
     if(children.size() != 2)
     {
         sem_error("Operation not allowed", this->line);
@@ -107,35 +178,48 @@ void BooleanExp::validate()
     Expression* left = dynamic_cast<Expression*>(children[0]);
     Expression* right = dynamic_cast<Expression*>(children[1]);
 
-    if(left->type != "Bool" || left->type != "Bool")
+    left->validate(st);
+    right->validate(st);
+
+    if(left->type != "Bool" || right->type != "Bool")
     {
         sem_error("Binary operation allowed only for boolean type", this->line);
     }
 
+    validated = true;
 }
 
-void Uminus::validate()
+void Uminus::validate(const SymbolTable &st)
 {
+    if(validated)
+        return;
     if(children.size() !=1)
     {
         sem_error("Operation not allowed", this->line);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
+    left->validate(st);
 
     if(left->type != "Int" && left->type != "Float")
         sem_error("Aritmetic operation allowed only for int and float types", this->line);
+
+    validated = true;
 }
 
-void Not::validate()
+void Not::validate(const SymbolTable &st)
 {
-    
+    if(validated)
+        return;
+
     if(children.size() !=1)
     {
         sem_error("Operation not allowed", this->line);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
+
+    left->validate(st);
     
     if(left->type == "Any")
     {
@@ -146,10 +230,15 @@ void Not::validate()
     if(left->type != "Bool")
         sem_error("Binary operation allowed only for boolean type", this->line);
 
+    validated = true;
+
 }
 
-void LogicExp::validateNaN()
+void LogicExp::validateNaN(const SymbolTable& st)
 {
+    if(validated)
+        return;
+
     if(children.size() != 2)
     {
         sem_error("Operation not allowed", this->line);
@@ -163,6 +252,8 @@ void LogicExp::validateNaN()
         sem_error("Operaciones no permitidas", this->line);
     }
 
+    left->validate(st);
+    right->validate(st);
 
     if(left->type != right->type)
     {
@@ -185,11 +276,15 @@ void LogicExp::validateNaN()
         }
 
     }
+
+     validated = true;
 }
 
-void LogicExp::validateNum()
+void LogicExp::validateNum(const SymbolTable& st)
 {
 
+    if(validated)
+        return;
     if(children.size() != 2)
     {
         sem_error("Operation not allowed", this->line);
@@ -202,6 +297,9 @@ void LogicExp::validateNum()
     {
         sem_error("Operaciones no permitidas", this->line);
     }
+
+    left->validate(st);
+    right->validate(st);
 
     if(left->type == "Any" || right->type == "Any")
     {
@@ -221,4 +319,5 @@ void LogicExp::validateNum()
         
     }
 
+    validated = true;
 }

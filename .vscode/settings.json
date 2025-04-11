@@ -75,6 +75,7 @@
         "fstream": "cpp",
         "shared_mutex": "cpp",
         "typeindex": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "*.ipp": "cpp"
     }
 }
