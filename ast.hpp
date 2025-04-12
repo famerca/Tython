@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include "analysis.hpp"
-
+#include "symbolTable.hpp"
 
 class Ast 
 {
@@ -47,8 +47,9 @@ class Ast
             out << "}" << std::endl;
         }
 
-        virtual void validate(const SymbolTable& st) 
+        virtual void validate(SymbolTable& st) 
         {
+            std::cout << "Validate " << label << std::endl;
             validated = true;
         }
 };
@@ -59,6 +60,8 @@ class Statement: public Ast {
          Statement(std::string label) : Ast("stat") {
             this->label = this->label + ": " + label;
         }
+
+    
 };
 
 class Block: public Ast {
@@ -77,8 +80,19 @@ class Declaration: public Statement{
         Declaration(std::string i, std::string t ) : Statement("Declaration"), name(i), type(t)
         {}
 
-        void validate(const SymbolTable& st) override;
+        void validate(SymbolTable& st) override;
      
+};
+
+class Assignment: public Statement
+{   
+    public:
+        std::string name;
+        std::string type;
+
+        Assignment(std::string n) : Statement("Assignment"), name(n), type("Any"){}
+
+        void validate(SymbolTable& st) override;
 };
 
 class Expression: public Ast {
@@ -94,13 +108,17 @@ class Expression: public Ast {
             //std::cout << "Creando una expresion:" << value << std::endl;
         }
         
-        virtual void validate(const SymbolTable& st);
+        virtual void validate(SymbolTable& st);
 
 };
 
 class Number: public Expression {
     public:
         Number(std::string v);
+
+        void validate(SymbolTable& st) override{
+            validated = true;
+        };
 };
 
 class String: public Expression
@@ -109,6 +127,10 @@ class String: public Expression
         String(std::string v) : Expression(v, "String") {
             this->label = "String: " + v;
         }
+
+        void validate(SymbolTable& st) override{
+            validated = true;
+        };
 };
 
 class Identifier: public Expression
@@ -119,7 +141,7 @@ class Identifier: public Expression
             this->label = "Identifier: " + v;
         }
 
-        void validate(const SymbolTable& st) override;
+        void validate(SymbolTable& st) override;
 };
 
 class Aritmetic: public Expression
@@ -128,7 +150,7 @@ class Aritmetic: public Expression
         Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
             this->label = op + ": Int";
         }
-        void validate(const SymbolTable& st) override;
+        void validate(SymbolTable& st) override;
 };
 
 class Sum: public Aritmetic
@@ -157,7 +179,7 @@ class Div: public Aritmetic
     public:
         Div(int l) : Aritmetic("/", l) {}
     
-    void validate(const SymbolTable& st) override;
+    void validate(SymbolTable& st) override;
 };
 
 class Uminus: public Aritmetic
@@ -165,7 +187,7 @@ class Uminus: public Aritmetic
     public:
         Uminus(int l): Aritmetic("uminus", l){}
 
-    void validate(const SymbolTable& st) override;
+    void validate(SymbolTable& st) override;
 };
 
 class BooleanExp: public Expression
@@ -176,7 +198,7 @@ class BooleanExp: public Expression
             label = op + ": Bool"; 
         }
 
-    void validate(const SymbolTable& st) override;
+    void validate(SymbolTable& st) override;
 };
 
 class And: public BooleanExp
@@ -197,7 +219,7 @@ class Not: public BooleanExp
     public:
         Not(int l): BooleanExp("Not", l) {}
 
-    void validate(const SymbolTable& st) override;
+    void validate(SymbolTable& st) override;
 };
 
 class LogicExp: public Expression
@@ -205,8 +227,8 @@ class LogicExp: public Expression
     public:
         LogicExp(std::string op, int l) : Expression(op, "Bool", l) {}
 
-        void validateNaN(const SymbolTable& st);
-        void validateNum(const SymbolTable& st);
+        void validateNaN(SymbolTable& st);
+        void validateNum(SymbolTable& st);
 };
 
 class Compare: public LogicExp
@@ -215,7 +237,7 @@ class Compare: public LogicExp
     public:
         Compare(int l): LogicExp("==", l) {}
 
-        void validate(const SymbolTable& st) override 
+        void validate(SymbolTable& st) override 
         {
             LogicExp::validateNaN(st);
         }
@@ -226,7 +248,7 @@ class Diff: public LogicExp
     public:
         Diff(int l): LogicExp("!=", l) {}
         
-        void validate(const SymbolTable& st) override
+        void validate(SymbolTable& st) override
         {
             LogicExp::validateNaN(st);
         }
@@ -238,7 +260,7 @@ class Greater: public LogicExp
     public:
         Greater(int l): LogicExp(">", l) {}
 
-        void validate(const SymbolTable& st) override
+        void validate(SymbolTable& st) override
         {
             LogicExp::validateNum(st);
         }
@@ -249,7 +271,7 @@ class GreaterE: public LogicExp
     public:
         GreaterE(int l): LogicExp(">=", l) {}
 
-        void validate(const SymbolTable& st) override
+        void validate(SymbolTable& st) override
         {
             LogicExp::validateNum(st);
         }
@@ -260,7 +282,7 @@ class Less: public LogicExp
     public:
         Less(int l): LogicExp("<", l) {}
 
-        void validate(const SymbolTable& st) override
+        void validate(SymbolTable& st) override
         {
             LogicExp::validateNum(st);
         }
@@ -272,7 +294,7 @@ class LessE: public LogicExp
     public:
         LessE(int l): LogicExp("<=", l) {}
 
-        void validate(const SymbolTable& st) override
+        void validate(SymbolTable& st) override
         {
             LogicExp::validateNum(st);
         }

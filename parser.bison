@@ -187,17 +187,17 @@ stmt_while:
 
 declaration:
     TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
-        $$ = new Ast("Declaration : " + *$3 );
+        $$ = new Declaration(*$1, *$3);
         $$->addChild($5);
     }
     | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Ast("Declaration : " + *$3 );
+        $$ = new Declaration(*$1, *$3);
     }
     ;
 
 assignment:
     TOKEN_IDENTIFIER TOKEN_ASSIGN expression{
-        $$ = new Ast("Statement Assignment");
+        $$ = new Assignment(*$1);
         $$->addChild($3);
     }
     ;

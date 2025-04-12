@@ -15,20 +15,13 @@ class Analysis {
         SymbolTable st;
         Ast* ast;
     
-        // pila para el recorrido en profundidad
-        std::vector<Ast*> pila;
-    
     public:
         Analysis(Ast* a);
     
         void nameResolution();
-        void typeChecking();
+        
+        void Resolution(Ast* node);
     
-        // inicializa el recorrido
-        void beginTraversal();
-    
-        // obtiene el siguiente nodo (o nullptr si ya no hay)
-        Ast* nextNode();
     };
     
 

@@ -1,15 +1,15 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="Statements"]
-  node2 [label="Declaration : Int"]
+  node2 [label="stat: Declaration"]
   node3 [label="number: 10"]
   node2 -> node3;
   node1 -> node2;
-  node4 [label="Declaration : Int"]
+  node4 [label="stat: Declaration"]
   node5 [label="number: 20"]
   node4 -> node5;
   node1 -> node4;
-  node6 [label="Declaration : Int"]
+  node6 [label="stat: Declaration"]
   node1 -> node6;
   node7 [label="stat: If Else"]
   node8 [label="expression"]
@@ -22,7 +22,7 @@ digraph AST {
   node12 [label="Statements"]
   node13 [label="Function Call"]
   node14 [label="Arguments"]
-  node15 [label="String: "number1 is greater than number2""]
+  node15 [label="String: 'number1 is greater than number2'"]
   node14 -> node15;
   node13 -> node14;
   node12 -> node13;
@@ -30,7 +30,7 @@ digraph AST {
   node7 -> node11;
   node16 [label="Block"]
   node17 [label="Statements"]
-  node18 [label="Statement Assignment"]
+  node18 [label="stat: Assignment"]
   node19 [label="+: Int"]
   node20 [label="Identifier: number1"]
   node19 -> node20;
@@ -57,32 +57,3 @@ digraph AST {
   node1 -> node7;
   node0 -> node1;
 }
-Node: Root
-Node: Statements
-Node: Declaration : Int
-Node: number: 10
-Node: Declaration : Int
-Node: number: 20
-Node: Declaration : Int
-Node: stat: If Else
-Node: expression
-Node: Identifier: number1
-Node: Identifier: number2
-Node: Block
-Node: Statements
-Node: Function Call
-Node: Arguments
-Node: String: "number1 is greater than number2"
-Node: Block
-Node: Statements
-Node: Statement Assignment
-Node: +: Int
-Node: Identifier: number1
-Node: *: Int
-Node: /: Int
-Node: Identifier: number2
-Node: number: 2
-Node: number: 5
-Node: Function Call
-Node: Arguments
-Node: Identifier: number3

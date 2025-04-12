@@ -1,4 +1,4 @@
-CXX = g++ -std=c++17
+CXX = g++ -std=c++17 -g -O0
 FLEX = flex
 BISON = bison -Wcounterexamples --defines=token.h
 

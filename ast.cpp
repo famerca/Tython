@@ -1,18 +1,20 @@
 #include "ast.hpp"
 
 
-void Declaration::validate(const SymbolTable &st)
+void Declaration::validate(SymbolTable &st)
 {
     if(validated)
         return;
-    
+
     if(children.size() > 1)
     {
         sem_error("Declaration can only have one expression", this->line);
     }
+
     if(children.size() == 1)
     {
         Expression* expr = dynamic_cast<Expression*>(children[0]);
+        
         expr->validate(st);
 
         if(this->type != expr->type)
@@ -21,10 +23,50 @@ void Declaration::validate(const SymbolTable &st)
         }
     }
 
+    if(!st.insert(this, this->name, false))
+    {
+        sem_warning("Redeclaration of " + this->name, this->line);
+    }
+
     validated = true;
 }
 
-void Identifier::validate(const SymbolTable &st)
+void Assignment::validate(SymbolTable &st)
+{
+    if(validated)
+        return;
+
+    if(children.size() != 1)
+    {
+        sem_error("Declaration can only have one expression", this->line);
+    }
+
+    auto symbol = st.lookup(this->name);
+
+    if(symbol)
+    {
+        if(symbol->isFunction)
+            sem_error("Assignment to function", this->line);
+        
+        this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
+    }
+    else
+        sem_error("Undeclared identifier: " + this->name, this->line);
+
+    Expression *expr = dynamic_cast<Expression*>(children[0]);
+    expr->validate(st);
+
+    if(this->type != expr->type)
+    {
+        std::string error = "Training assignment " + expr->type + " to " + this->name + ":" + this->type + "\n";
+        
+        sem_error(error, this->line);
+    }
+
+    validated = true;
+}
+
+void Identifier::validate(SymbolTable &st)
 {
     if(validated)
         return;
@@ -59,10 +101,15 @@ Number::Number(std::string v) : Expression(v,"Int")
 }
 
 
-void  Expression::validate(const SymbolTable &st)
+void  Expression::validate(SymbolTable &st)
 {
     if(validated)
         return;
+
+    if(children.size() != 2)
+    {
+        sem_error("Operation for", this->line);
+    }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
     Expression* right = dynamic_cast<Expression*>(children[1]);
@@ -87,7 +134,7 @@ void  Expression::validate(const SymbolTable &st)
 
 }
 
-void Aritmetic::validate(const SymbolTable &st)
+void Aritmetic::validate(SymbolTable &st)
 {
 
     if(validated)
@@ -148,7 +195,7 @@ void Aritmetic::validate(const SymbolTable &st)
      validated = true;
 }
 
-void Div::validate(const SymbolTable &st)
+void Div::validate(SymbolTable &st)
 {
     if(validated)
         return;
@@ -165,7 +212,7 @@ void Div::validate(const SymbolTable &st)
 
 }
 
-void BooleanExp::validate(const SymbolTable &st)
+void BooleanExp::validate(SymbolTable &st)
 {
     if(validated)
         return;
@@ -189,7 +236,7 @@ void BooleanExp::validate(const SymbolTable &st)
     validated = true;
 }
 
-void Uminus::validate(const SymbolTable &st)
+void Uminus::validate(SymbolTable &st)
 {
     if(validated)
         return;
@@ -207,7 +254,7 @@ void Uminus::validate(const SymbolTable &st)
     validated = true;
 }
 
-void Not::validate(const SymbolTable &st)
+void Not::validate(SymbolTable &st)
 {
     if(validated)
         return;
@@ -234,7 +281,7 @@ void Not::validate(const SymbolTable &st)
 
 }
 
-void LogicExp::validateNaN(const SymbolTable& st)
+void LogicExp::validateNaN(SymbolTable& st)
 {
     if(validated)
         return;
@@ -280,7 +327,7 @@ void LogicExp::validateNaN(const SymbolTable& st)
      validated = true;
 }
 
-void LogicExp::validateNum(const SymbolTable& st)
+void LogicExp::validateNum(SymbolTable& st)
 {
 
     if(validated)
