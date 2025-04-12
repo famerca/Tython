@@ -1,5 +1,6 @@
 %{
 #include "token.h"
+#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno;
 
 int current_indent = 0;  // Nivel de indentación actual
 int new_indent = 0;      // Nivel de indentación en la nueva línea
@@ -8,13 +9,15 @@ int pending_linebreak = 0;
 
 %}
 
+%option yylineno
+
 SPACE      [ \t\n]
 DIGIT      [0-9]
 LETTER     [A-Za-z]
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 TEXT       \"({DIGIT}|{LETTER}|{SPACE})*\"
 NUMBER      {DIGIT}+("."{DIGIT}+)?
-TYPE        Int|Float|String|Any
+TYPE        Int|Float|String|Bool|Any
 
 %%
 
@@ -151,6 +154,10 @@ TYPE        Int|Float|String|Any
                 yylval.str = new std::string(yytext);
                 return TOKEN_NUMBER;
              }
+. {
+    printf("Error: Unexpected character: %c\n", yytext[0]);
+    exit(1);
+}
 <<EOF>> {
 
     if(current_indent > 0) {

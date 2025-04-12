@@ -11,24 +11,23 @@
 
 %{
 #include <stdio.h>
-#include "ast.hpp"
 #include <string>
-#include <algorithm>
-#define YYDEBUG 0
+#include "ast.hpp"
+
+//#define YYDEBUG 1
 
 extern int yylex();
-int yyerror(const char*);
+
+void yyerror(const char*);
+
+extern int yylineno; 
 
 Ast* ast = NULL;
 
-std::string reemplazarComillas(const std::string& texto) {
-    std::string resultado = texto;
-    std::replace(resultado.begin(), resultado.end(), '\"', '\'');
-    return resultado;
-}
-
-
 %}
+
+%locations
+%define parse.error verbose
 
 // Token declarations
 %token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_BREAK TOKEN_IN
@@ -88,7 +87,7 @@ program:
 // Bloque de código (indentación)
 block: 
     TOKEN_COLON TOKEN_INDENT statement_list TOKEN_DEDENT {
-        $$ = new Ast("Block");
+        $$ = new Block();
         $$->addChild($3);
     }
 ;
@@ -180,33 +179,38 @@ stmt_while:
 
 declaration:
     TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
-        $$ = new Ast("Declaration : " + *$3 );
+        $$ = new Declaration(*$1, *$3);
+        $$->line = @1.first_line;
         $$->addChild($5);
-        delete $3;
     }
     | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Ast("Declaration : " + *$3 );
-        delete $3;
+        $$ = new Declaration(*$1, *$3);
+        $$->line = @1.first_line;
     }
     ;
 
 assignment:
     TOKEN_IDENTIFIER TOKEN_ASSIGN expression{
-        $$ = new Ast("Statement Assignment");
+        $$ = new Assignment(*$1);
+        $$->line = @1.first_line;
+        $$->addChild($3);
     }
     ;
 
 definition:
     TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN  block{
-        $$ = new Ast("Function Definition");
-        $$->addChild($4);
+        $$ = new Definition(*$2);
+        $$->line = @1.first_line;
         $$->addChild($6);
+        if($4)
+            $$->addChild($4);
     }
     | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE  block{
-        $$ = new Ast("Function --> " +  *$7);
-        $$->addChild($4);
+        $$ = new Definition(*$2, *$7);
+        $$->line = @1.first_line;
         $$->addChild($8);
-        delete $7;
+        if($4)
+            $$->addChild($4);
     }
     ;
 
@@ -220,15 +224,19 @@ parameters:
         $$ = new Ast("Parameters");
         $$->addChild($1);
     }
+    | %empty {
+        $$ = nullptr;
+    }
     ;
 
 parameter:
       TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Ast("Parameter : " + *$3);
-        delete $3;
+        $$ = new Parameter(*$1, *$3);
+        $$->line = @1.first_line;
       }
     | TOKEN_IDENTIFIER{
-        $$ = new Ast("Parameter");
+        $$ = new Parameter(*$1, "Any");
+        $$->line = @1.first_line;
     }
     ;
 
@@ -246,8 +254,8 @@ arguments:
 
 function_call:
     TOKEN_IDENTIFIER TOKEN_LPAREN arguments TOKEN_RPAREN {
-        $$ = new Ast("Function Call");
-        $$->addChild($3);
+        $$ = new FunctionCall(*$1, $3);
+        $$->line = @1.first_line;
     }
     ;
 
@@ -256,46 +264,86 @@ expression:
         $$ = $2;
     }
     | expression TOKEN_COMPARE expression{
-        $$ = new Ast("Compare");
+        $$ = new Compare(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+  
     }
     | expression TOKEN_DIFFERENT expression{
-        $$ = new Ast("Different");
+        $$ = new Diff(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+      
     }
     | expression TOKEN_LESS expression{
-        $$ = new Ast("Less");
+        $$ = new Less(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_LESS_EQUAL expression{
-        $$ = new Ast("LessEqual");
+        $$ = new LessE(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_GREATER expression{
-        $$ = new Ast("Greater");
+        $$ = new Greater(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_GREATER_EQUAL expression{
-        $$ = new Ast("GreaterEqual");
+        $$ = new GreaterE(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_AND expression{
-         $$ = new Ast("And");
+        $$ = new And(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     |  expression TOKEN_OR expression{
-          $$ = new Ast("Or");
+        $$ = new Or(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_PLUS expression{
-        $$ = new Ast("Plus");
+        $$ = new Sum(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_MINUS expression{
-        $$ = new Ast("Minus");
+        $$ = new Sub(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_MULTIPLY expression{
-        $$ = new Ast("Multiply");
+        $$ = new Mul(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | expression TOKEN_DIVIDE expression{
-        $$ = new Ast("Divide");
+        $$ = new Div(@1.first_line);
+        $$->addChild($1);
+        $$->addChild($3);
+
     }
     | TOKEN_NOT expression {
-        $$ = new Expression("", "");
+        $$ = new Or(@1.first_line);
+        $$->addChild($2);
+
     }
     | TOKEN_MINUS expression %prec UMINUS {
-        $$ = new Expression("", "");
+        $$ = new Uminus(@1.first_line);
+        $$->addChild($2);
+
     }
     | function_call {
         $$ = $1;
@@ -307,16 +355,13 @@ expression:
 
 term :
     TOKEN_NUMBER {
-        $$ = new Ast("Number : " + *$1);
-        delete $1;
+        $$ = new Number(*$1);
     }
     | TOKEN_STRING {
-        $$ = new Ast("String: " + reemplazarComillas(*$1) );
-        delete $1;
+        $$ = new String(*$1);
     }
     | TOKEN_IDENTIFIER {
-        $$ = new Ast("Identifier : " + *$1);
-        delete $1;
+        $$ = new Identifier(*$1);
     }
     ;
 
@@ -324,8 +369,8 @@ term :
 
 
 
-int yyerror(const char* s)
+void yyerror(const char* s)
 {
-    printf("Parse error: %s\n", s);
-    return 1;
+    fprintf(stderr, "Line %d: %s\n", yylineno, s);
+
 }

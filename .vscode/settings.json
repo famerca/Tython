@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.bison": "yacc",
         "cctype": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",
@@ -73,6 +74,8 @@
         "source_location": "cpp",
         "fstream": "cpp",
         "shared_mutex": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "codecvt": "cpp",
+        "*.ipp": "cpp"
     }
 }
