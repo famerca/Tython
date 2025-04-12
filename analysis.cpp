@@ -18,7 +18,7 @@ Analysis::Analysis(Ast *a) : ast(a), st()
 
 void Analysis::Resolution(Ast* node)
 {
-    std::cout << "resolviendo " << node->label << std::endl;
+    //std::cout << "resolviendo " << node->label << std::endl;
     if(node->label == "Block")
     {
         st.enterScope();

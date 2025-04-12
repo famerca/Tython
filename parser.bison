@@ -12,7 +12,6 @@
 %{
 #include <stdio.h>
 #include <string>
-#include <algorithm>
 #include "ast.hpp"
 
 //#define YYDEBUG 1
@@ -24,13 +23,6 @@ void yyerror(const char*);
 extern int yylineno; 
 
 Ast* ast = NULL;
-
-std::string reemplazarComillas(const std::string& texto) {
-    std::string resultado = texto;
-    std::replace(resultado.begin(), resultado.end(), '\"', '\'');
-    return resultado;
-}
-
 
 %}
 
@@ -188,30 +180,37 @@ stmt_while:
 declaration:
     TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_ASSIGN expression{
         $$ = new Declaration(*$1, *$3);
+        $$->line = @1.first_line;
         $$->addChild($5);
     }
     | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
         $$ = new Declaration(*$1, *$3);
+        $$->line = @1.first_line;
     }
     ;
 
 assignment:
     TOKEN_IDENTIFIER TOKEN_ASSIGN expression{
         $$ = new Assignment(*$1);
+        $$->line = @1.first_line;
         $$->addChild($3);
     }
     ;
 
 definition:
     TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN  block{
-        $$ = new Ast("Function Definition");
-        $$->addChild($4);
+        $$ = new Definition(*$2);
+        $$->line = @1.first_line;
         $$->addChild($6);
+        if($4)
+            $$->addChild($4);
     }
     | TOKEN_FUNC_DEF TOKEN_IDENTIFIER TOKEN_LPAREN parameters TOKEN_RPAREN TOKEN_ARROW TOKEN_TYPE  block{
-        $$ = new Ast("Function --> " +  *$7);
-        $$->addChild($4);
+        $$ = new Definition(*$2, *$7);
+        $$->line = @1.first_line;
         $$->addChild($8);
+        if($4)
+            $$->addChild($4);
     }
     ;
 
@@ -225,14 +224,19 @@ parameters:
         $$ = new Ast("Parameters");
         $$->addChild($1);
     }
+    | %empty {
+        $$ = nullptr;
+    }
     ;
 
 parameter:
       TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE{
-        $$ = new Ast("Parameter : " + *$3);
+        $$ = new Parameter(*$1, *$3);
+        $$->line = @1.first_line;
       }
     | TOKEN_IDENTIFIER{
-        $$ = new Ast("Parameter");
+        $$ = new Parameter(*$1, "Any");
+        $$->line = @1.first_line;
     }
     ;
 
@@ -250,8 +254,8 @@ arguments:
 
 function_call:
     TOKEN_IDENTIFIER TOKEN_LPAREN arguments TOKEN_RPAREN {
-        $$ = new Ast("Function Call");
-        $$->addChild($3);
+        $$ = new FunctionCall(*$1, $3);
+        $$->line = @1.first_line;
     }
     ;
 

@@ -17,8 +17,6 @@ class Analysis {
     
     public:
         Analysis(Ast* a);
-    
-        void nameResolution();
         
         void Resolution(Ast* node);
     

@@ -30,6 +30,7 @@ bool SymbolTable::insert(Ast *node, const std::string& name, const bool& isFunct
     return true;
 }
 
+
 std::optional<Symbol> SymbolTable::lookup(const std::string& name) const {
     for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
         const auto& scope = *it;

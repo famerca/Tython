@@ -1,5 +1,12 @@
 #include "ast.hpp"
 
+std::string reemplazarComillas(const std::string& texto)
+{
+    std::string resultado = texto;
+    std::replace(resultado.begin(), resultado.end(), '\"', '\'');
+    return resultado;
+}
+
 
 void Declaration::validate(SymbolTable &st)
 {
@@ -78,7 +85,15 @@ void Identifier::validate(SymbolTable &st)
         if(symbol->isFunction)
             sem_error("Identifier cannot be used as function", this->line);
         
-        this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
+        
+        if(symbol->nodo->label == "Parameter")
+        {
+            Parameter* param = dynamic_cast<Parameter*>(symbol->nodo);
+            this->type = param->type;
+        }
+        else
+            this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
+    
     }
     else
         sem_error("Undeclared identifier: " + this->value, this->line);
@@ -209,7 +224,23 @@ void Div::validate(SymbolTable &st)
     }
 
     Aritmetic::validate(st);
+}
 
+void Sum::validate(SymbolTable& st)
+{
+    if(validated)
+        return;
+
+    Expression* left = dynamic_cast<Expression*>(children[0]);
+    Expression* right = dynamic_cast<Expression*>(children[1]);
+
+    if(left->type == "Float" || right->type == "Float")
+        type = "Float";
+    
+    if(left->type == "String" || right->type == "String")
+        type = "String";
+    
+    Aritmetic::validate(st);
 }
 
 void BooleanExp::validate(SymbolTable &st)
@@ -368,3 +399,161 @@ void LogicExp::validateNum(SymbolTable& st)
 
     validated = true;
 }
+
+void Definition::validate(SymbolTable& st)
+{
+    if(validated)
+        return;
+
+    if(children.size() == 0)
+    {
+        sem_error("Invalid definition", this->line);
+    }
+
+    if(children.size() == 2)
+    {
+        for(Ast* param : children[1]->children)
+        {
+            Parameter* paramAst = dynamic_cast<Parameter*>(param);
+            
+            parameters.push_back(paramAst);
+
+            if(paramAst->type == "Any")
+            {
+                sem_warning("Type Any is not recommended", this->line);
+            }
+        }
+    }
+ 
+    Block* block = dynamic_cast<Block*>(children[0]);
+    block->def = this;
+
+    if(!st.insert(this, this->name, true))
+    {
+        sem_error("Redeclaration of function " + this->name, this->line);
+    }
+
+
+    validated = true;
+}
+
+void Block::validate(SymbolTable& st)
+{
+    if(validated)
+        return;
+    
+    if(def != nullptr)
+    {
+        for(Parameter* param : def->parameters)
+        {
+            st.insert(param, param->name, false);
+        }
+    }
+
+    bool found = false;
+    for(Ast* stmt : children)
+    {
+        if(stmt->label == "return")
+        {
+            if(def == nullptr)
+            {
+                sem_error("Return statement outside function", stmt->line);
+            }else
+            {
+                found = true;
+                Return* ret = dynamic_cast<Return*>(stmt);
+                ret->type = def->type;
+                break;
+            }
+
+        }
+        
+    }
+
+    if(def == nullptr || def->type == "void")
+    {
+        validated = true;
+        return;
+    }
+
+    if(!found )
+    {
+        sem_error("This function must return a " + def->type, this->line);
+    }
+
+    validated = true;
+}
+
+void Return::validate(SymbolTable& st)
+{
+    if(validated)
+        return;
+
+    if(type == "void")
+    {
+        validated = true;
+        return;
+    }
+
+    if(children.size() != 1 )
+    {
+        sem_error("Invalid return", this->line);
+    }
+
+    Expression* expr = dynamic_cast<Expression*>(children[0]);
+    expr->validate(st);
+
+    if(expr->type != type)
+    {
+        std::string error = "Return type mismatch in function \n";
+        error += "Expected: " + type + "\n";
+        error += "Returned: " + expr->type + "\n";
+        sem_error(error, this->line);
+    }
+
+    validated = true;
+}
+
+void FunctionCall::validate(SymbolTable& st)
+{
+    if(validated)
+        return;
+
+    auto symbol = st.lookup(value);
+
+    if(symbol)
+    {
+        if(symbol->isFunction)
+        {
+            Definition* def = dynamic_cast<Definition*>(symbol->nodo);
+
+            type = def->type;
+
+            if(children.size() != def->parameters.size())
+            {
+                sem_error("Invalid arguments count", this->line);
+            }
+
+            for(int i = 0; i < children.size(); ++i)
+            {
+                Expression* expr = dynamic_cast<Expression*>(children[i]);
+                expr->validate(st);
+
+                if(expr->type != def->parameters[i]->type)
+                {
+                    std::string error = "Invalid argument type in function call \n";
+                    error += "Expected: " + def->parameters[i]->type + "\n";
+                    error += "Received: " + expr->type + "\n";
+                    sem_error(error, this->line);
+                }
+            }
+            
+        }else
+            sem_error("Cannot call non-function", this->line);
+    } else
+        sem_error("Undefined function: " + value, this->line);
+
+    
+
+    validated = true;
+}   

@@ -3,9 +3,12 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include "analysis.hpp"
 #include "symbolTable.hpp"
+
+std::string reemplazarComillas(const std::string& texto);
 
 class Ast 
 {
@@ -32,7 +35,7 @@ class Ast
         
         void generateDot(std::ostream& out, int& counter) {
             int nodeId = counter++;
-            out << "  node" << nodeId << " [label=\"" << label << "\"]" << std::endl;
+            out << "  node" << nodeId << " [label=\"" << reemplazarComillas(label) << "\"]" << std::endl;
             for (Ast* child : children) {
                 int childId = counter;
                 child->generateDot(out, counter);
@@ -49,7 +52,7 @@ class Ast
 
         virtual void validate(SymbolTable& st) 
         {
-            std::cout << "Validate " << label << std::endl;
+            //std::cout << "Validate " << label << std::endl;
             validated = true;
         }
 };
@@ -64,12 +67,49 @@ class Statement: public Ast {
     
 };
 
+class Definition: public Ast {
+    public:
+        std::vector<Parameter *> parameters;
+        std::string type;
+        std::string name;
+        
+        Definition(std::string i, std::string t = "void") : Ast("Definition"), parameters(), type(t), name(i)
+        {}
+
+        void validate(SymbolTable& st) override;
+};
+
 class Block: public Ast {
     public:
-        Block() : Ast("Block") 
+
+        Definition *def;
+
+        Block() : Ast("Block")
         {
-           // std::cout << "Creando un bloque" << std::endl;
+            def = nullptr;
         }
+
+        void validate(SymbolTable& st) override;
+};
+
+class Parameter : public Ast {
+    public:
+        std::string name;
+        std::string type;
+        
+        Parameter(std::string i, std::string t ) : Ast("Parameter"), name(i), type(t)
+        {}
+};
+
+class Return: public Ast 
+{
+    public:
+        std::string type;
+
+        Return() : Ast("Return"), type("void")
+        {}
+
+        void validate(SymbolTable& st) override;
 };
 
 class Declaration: public Statement{
@@ -160,6 +200,8 @@ class Sum: public Aritmetic
         {
             //std::cout << "Creando suma";
         }
+
+        void validate(SymbolTable& st) override;
 };
 
 class Sub: public Aritmetic
@@ -177,7 +219,10 @@ class Mul: public Aritmetic
 class Div: public Aritmetic
 {
     public:
-        Div(int l) : Aritmetic("/", l) {}
+        Div(int l) : Aritmetic("/", l) 
+        {
+            type = "Float";
+        }
     
     void validate(SymbolTable& st) override;
 };
@@ -299,5 +344,19 @@ class LessE: public LogicExp
             LogicExp::validateNum(st);
         }
 };
+
+class FunctionCall: public Expression 
+{
+    public:
+        std::string name;
+
+        FunctionCall(std::string i, Ast *arg) : Expression(i, "Void")
+        {
+            this->children = arg->children;
+        }
+
+        void validate(SymbolTable& st) override;
+};
+
 
 #endif
