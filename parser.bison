@@ -87,8 +87,7 @@ program:
 // Bloque de código (indentación)
 block: 
     TOKEN_COLON TOKEN_INDENT statement_list TOKEN_DEDENT {
-        $$ = new Block();
-        $$->addChild($3);
+        $$ = new Block($3);
     }
 ;
 

@@ -84,9 +84,10 @@ class Block: public Ast {
 
         Definition *def;
 
-        Block() : Ast("Block")
+        Block(Ast * a) : Ast("Block")
         {
             def = nullptr;
+            this->children = a->children;
         }
 
         void validate(SymbolTable& st) override;
