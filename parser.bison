@@ -133,15 +133,17 @@ statement:
         $$ = $1;
     }
     |  TOKEN_RETURN expression {
-        $$ = new Ast("return");
+        $$ = new Return();
         $$->addChild($2);
+        $$->line = @1.first_line;
     }
     |  TOKEN_BREAK {
         $$ = new Ast("break");
     }
     |  TOKEN_RETURN
     {
-        $$ = new Ast("return");
+        $$ = new Return();
+        $$->line = @1.first_line;
     }
     |  expression {
         $$ = $1;
@@ -164,7 +166,7 @@ stmt_if:
 
 stmt_for:
     TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
-        $$ = new Ast("For ");
+        $$ = new Ast("For");
         $$->addChild($4);
         $$->addChild($5);
     }

@@ -107,7 +107,7 @@ class Return: public Ast
     public:
         std::string type;
 
-        Return() : Ast("Return"), type("void")
+        Return() : Ast("return"), type("void")
         {}
 
         void validate(SymbolTable& st) override;

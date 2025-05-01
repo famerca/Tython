@@ -24,7 +24,10 @@ void Declaration::validate(SymbolTable &st)
         
         expr->validate(st);
 
-        if(this->type != expr->type)
+        if(this->type == "Any")
+        {
+            sem_warning("Any type is not recommended", this->line);
+        }else if(this->type != expr->type)
         {
             sem_error("Type mismatch in declaration", this->line);
         }
