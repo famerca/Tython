@@ -103,6 +103,8 @@ TYPE        Int|Float|String|Bool|Any
                 return TOKEN_FUNC_DEF; 
               }
 "return"      { return TOKEN_RETURN; }
+"break"       {return TOKEN_BREAK; }
+"continue"    {return TOKEN_CONTINUE; }
 "in"          { return TOKEN_IN; }
 "->"         { return TOKEN_ARROW; }
 "=="         { return TOKEN_COMPARE; }

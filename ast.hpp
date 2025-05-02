@@ -83,11 +83,8 @@ class Definition: public Ast {
 class Block: public Ast {
     public:
 
-        Definition *def;
-
         Block(Ast * a) : Ast("Block")
         {
-            def = nullptr;
             this->children = a->children;
         }
 
@@ -106,11 +103,39 @@ class Parameter : public Ast {
 class Return: public Ast 
 {
     public:
-        std::string type;
-
-        Return() : Ast("return"), type("void")
+        Return() : Ast("return")
         {}
 
+        void validate(SymbolTable& st, Context& ctx) override;
+};
+
+class Break: public Ast
+{
+    public:
+        Break() : Ast("Break") {}
+
+        void validate(SymbolTable& st, Context& ctx) override;
+};
+
+class Continue: public Ast
+{
+    public:
+        Continue() : Ast("Continue") {}
+
+        void validate(SymbolTable& st, Context& ctx) override;
+};
+
+class For: public Statement
+{
+    public:
+        For() : Statement("For") {}
+        void validate(SymbolTable& st, Context& ctx) override;
+};
+
+class While: public Statement
+{
+    public:
+        While() : Statement("While") {}
         void validate(SymbolTable& st, Context& ctx) override;
 };
 

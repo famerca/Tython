@@ -4,7 +4,7 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <utility>
 
 class Ast;
 
@@ -13,10 +13,12 @@ public:
     void push(const std::string& key, Ast* node);
     void pop();
     Ast* find(const std::string& key) const;
+    Ast* current(const std::string& key) const;
     bool contains(const std::string& key) const;
 
 private:
-    std::vector<std::unordered_map<std::string, Ast*>> stack;
+    using context = std::pair<std::string, Ast*>;
+    std::vector<context> stack;
 };
 
 #endif // CONTEXT_HPP

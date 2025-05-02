@@ -30,7 +30,7 @@ Ast* ast = NULL;
 %define parse.error verbose
 
 // Token declarations
-%token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_BREAK TOKEN_IN
+%token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_BREAK TOKEN_IN TOKEN_CONTINUE
 %token TOKEN_ASSIGN TOKEN_IDENTIFIER TOKEN_LPAREN TOKEN_RPAREN TOKEN_ARROW
 %token TOKEN_COMPARE TOKEN_DIFFERENT TOKEN_IF TOKEN_ELSE TOKEN_FOR
 %token TOKEN_WHILE TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_GREATER TOKEN_LESS
@@ -38,7 +38,7 @@ Ast* ast = NULL;
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
 %token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
 
-%left TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK  TOKEN_IF
+%left TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK  TOKEN_IF TOKEN_BREAK TOKEN_CONTINUE
 
 %left TOKEN_OR
 %left TOKEN_AND
@@ -75,12 +75,12 @@ start:
 program: 
     statement_list {
         $$ = new Ast("Root");
-        $$->addChild($1);
+        $$->children = $1->children;
 
     }|
     TOKEN_LINEBREAK statement_list {
         $$ = new Ast("Root");
-        $$->addChild($2);
+        $$->children = $2->children;
     }
     ;
 
@@ -138,7 +138,12 @@ statement:
         $$->line = @1.first_line;
     }
     |  TOKEN_BREAK {
-        $$ = new Ast("break");
+        $$ = new Break();
+        $$->line = @1.first_line;
+    }
+    | TOKEN_CONTINUE{
+        $$ = new Continue();
+        $$->line = @1.first_line;
     }
     |  TOKEN_RETURN
     {
@@ -166,14 +171,14 @@ stmt_if:
 
 stmt_for:
     TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
-        $$ = new Ast("For");
+        $$ = new For();
         $$->addChild($4);
         $$->addChild($5);
     }
 
 stmt_while:
     TOKEN_WHILE expression block{
-        $$ = new Ast("While");
+        $$ = new While();
         $$->addChild($2);
         $$->addChild($3);
     }

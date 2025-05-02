@@ -427,64 +427,58 @@ void Definition::validate(SymbolTable& st, Context& ctx)
             }
         }
     }
- 
-    Block* block = dynamic_cast<Block*>(children[0]);
-    block->def = this;
 
     if(!st.insert(this, this->name, true))
     {
         sem_error("Redeclaration of function " + this->name, this->line);
     }
 
+    ctx.push("function", this);
 
     validated = true;
+
 }
 
 void Block::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
-    
+    Ast *def = ctx.current("function");
+
     if(def != nullptr)
     {
-        for(Parameter* param : def->parameters)
+        Definition *d = dynamic_cast<Definition *>(def);
+
+        for(Parameter* param : d->parameters)
         {
             st.insert(param, param->name, false);
         }
-    }
 
-    bool found = false;
-    for(Ast* stmt : children)
-    {
-        if(stmt->label == "return")
+
+        if(d->type == "void")
         {
-            if(def == nullptr)
-            {
-                sem_error("Return statement outside function", stmt->line);
-            }else
-            {
-                found = true;
-                Return* ret = dynamic_cast<Return*>(stmt);
-                ret->type = def->type;
-                break;
-            }
-
+            validated = true;
+            return;
         }
+
+
+        for(Ast* stmt : children)
+        {
+            if(stmt->label == "return")
+            {
+                validated = true;
+                return;
+            }
+            
+        }
+
+        sem_error("This function must return a " + d->type, this->line);
         
-    }
 
-    if(def == nullptr || def->type == "void")
-    {
-        validated = true;
-        return;
-    }
-
-    if(!found )
-    {
-        sem_error("This function must return a " + def->type, this->line);
     }
 
     validated = true;
+
 }
 
 void Return::validate(SymbolTable& st, Context& ctx)
@@ -492,7 +486,19 @@ void Return::validate(SymbolTable& st, Context& ctx)
     if(validated)
         return;
 
-    if(type == "void")
+    Ast *f = ctx.find("function");
+
+    if(f == nullptr)
+    {
+        sem_error("Return statement out of function context", line);
+        validated = true;
+        return;
+
+    }
+
+    Definition *fun =  dynamic_cast<Definition *>(f);
+    
+    if(fun->type == "void")
     {
         validated = true;
         return;
@@ -506,10 +512,10 @@ void Return::validate(SymbolTable& st, Context& ctx)
     Expression* expr = dynamic_cast<Expression*>(children[0]);
     expr->validate(st, ctx);
 
-    if(expr->type != type)
+    if(expr->type != fun->type)
     {
         std::string error = "Return type mismatch in function \n";
-        error += "Expected: " + type + "\n";
+        error += "Expected: " + fun->type + "\n";
         error += "Returned: " + expr->type + "\n";
         sem_error(error, this->line);
     }
@@ -542,6 +548,15 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
                 Expression* expr = dynamic_cast<Expression*>(children[i]);
                 expr->validate(st, ctx);
 
+                if(def->parameters[i]->type == "Any")
+                    continue;
+
+                if(expr->type == "Any")
+                {
+                    sem_warning("Use of Any type not recommended", line);
+                    continue;
+                }
+
                 if(expr->type != def->parameters[i]->type)
                 {
                     std::string error = "Invalid argument type in function call \n";
@@ -559,4 +574,52 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
     
 
     validated = true;
-}   
+} 
+
+void For::validate(SymbolTable& st, Context& ctx)
+{
+    if(validated)
+        return;
+
+    ctx.push("for", this);
+
+    validated = true;
+}
+
+void While::validate(SymbolTable& st, Context& ctx)
+{
+    if(validated)
+        return;
+
+    ctx.push("while", this);
+
+    validated = true;
+}
+
+void Break::validate(SymbolTable& st, Context& ctx)
+{
+    if(validated)
+        return;
+
+    if(!ctx.contains("for") && !ctx.contains("while"))
+    {
+        sem_error("Break statement out of loop", line);
+    }
+    
+    validated = true;
+}
+
+void Continue::validate(SymbolTable& st, Context& ctx)
+{
+    if(validated)
+        return;
+
+    if(!ctx.contains("for") && !ctx.contains("while"))
+    {
+        sem_error("Continue statement out of loop", line);
+    }
+    
+    validated = true;
+}
+
+

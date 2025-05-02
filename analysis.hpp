@@ -2,6 +2,7 @@
 #define ANALYSIS_HPP
 #include <iostream>
 #include <string>
+#include <vector>
 #include "ast.hpp"
 #include "symbolTable.hpp"
 #include "context.hpp"
@@ -18,8 +19,8 @@ class Analysis {
         Ast* ast;
     
     public:
+    
         Analysis(Ast* a);
-        
         void Resolution(Ast* node);
     
     };
