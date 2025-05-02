@@ -24,7 +24,7 @@ void Analysis::Resolution(Ast* node)
         st.enterScope();
     }
 
-    node->validate(st);
+    node->validate(st, context);
     for (Ast* child : node->children) {
         Resolution(child);
     }

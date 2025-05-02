@@ -7,6 +7,7 @@
 #include <string>
 #include "analysis.hpp"
 #include "symbolTable.hpp"
+#include "context.hpp"
 
 std::string reemplazarComillas(const std::string& texto);
 
@@ -50,7 +51,7 @@ class Ast
             out << "}" << std::endl;
         }
 
-        virtual void validate(SymbolTable& st) 
+        virtual void validate(SymbolTable& st, Context& ctx)
         {
             //std::cout << "Validate " << label << std::endl;
             validated = true;
@@ -76,7 +77,7 @@ class Definition: public Ast {
         Definition(std::string i, std::string t = "void") : Ast("Definition"), parameters(), type(t), name(i)
         {}
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Block: public Ast {
@@ -90,7 +91,7 @@ class Block: public Ast {
             this->children = a->children;
         }
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Parameter : public Ast {
@@ -110,7 +111,7 @@ class Return: public Ast
         Return() : Ast("return"), type("void")
         {}
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Declaration: public Statement{
@@ -121,7 +122,7 @@ class Declaration: public Statement{
         Declaration(std::string i, std::string t ) : Statement("Declaration"), name(i), type(t)
         {}
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
      
 };
 
@@ -133,7 +134,7 @@ class Assignment: public Statement
 
         Assignment(std::string n) : Statement("Assignment"), name(n), type("Any"){}
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Expression: public Ast {
@@ -149,7 +150,7 @@ class Expression: public Ast {
             //std::cout << "Creando una expresion:" << value << std::endl;
         }
         
-        virtual void validate(SymbolTable& st);
+        virtual void validate(SymbolTable& st, Context& ctx);
 
 };
 
@@ -157,7 +158,7 @@ class Number: public Expression {
     public:
         Number(std::string v);
 
-        void validate(SymbolTable& st) override{
+        void validate(SymbolTable& st, Context& ctx) override{
             validated = true;
         };
 };
@@ -169,7 +170,7 @@ class String: public Expression
             this->label = "String: " + v;
         }
 
-        void validate(SymbolTable& st) override{
+        void validate(SymbolTable& st, Context& ctx) override{
             validated = true;
         };
 };
@@ -182,7 +183,7 @@ class Identifier: public Expression
             this->label = "Identifier: " + v;
         }
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Aritmetic: public Expression
@@ -191,7 +192,7 @@ class Aritmetic: public Expression
         Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
             this->label = op + ": Int";
         }
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Sum: public Aritmetic
@@ -202,7 +203,7 @@ class Sum: public Aritmetic
             //std::cout << "Creando suma";
         }
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Sub: public Aritmetic
@@ -225,7 +226,7 @@ class Div: public Aritmetic
             type = "Float";
         }
     
-    void validate(SymbolTable& st) override;
+    void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class Uminus: public Aritmetic
@@ -233,7 +234,7 @@ class Uminus: public Aritmetic
     public:
         Uminus(int l): Aritmetic("uminus", l){}
 
-    void validate(SymbolTable& st) override;
+    void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class BooleanExp: public Expression
@@ -244,7 +245,7 @@ class BooleanExp: public Expression
             label = op + ": Bool"; 
         }
 
-    void validate(SymbolTable& st) override;
+    void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class And: public BooleanExp
@@ -265,7 +266,7 @@ class Not: public BooleanExp
     public:
         Not(int l): BooleanExp("Not", l) {}
 
-    void validate(SymbolTable& st) override;
+    void validate(SymbolTable& st, Context& ctx) override;
 };
 
 class LogicExp: public Expression
@@ -273,8 +274,8 @@ class LogicExp: public Expression
     public:
         LogicExp(std::string op, int l) : Expression(op, "Bool", l) {}
 
-        void validateNaN(SymbolTable& st);
-        void validateNum(SymbolTable& st);
+        void validateNaN(SymbolTable& st, Context& ctx);
+        void validateNum(SymbolTable& st, Context& ctx);
 };
 
 class Compare: public LogicExp
@@ -283,9 +284,9 @@ class Compare: public LogicExp
     public:
         Compare(int l): LogicExp("==", l) {}
 
-        void validate(SymbolTable& st) override 
+        void validate(SymbolTable& st, Context& ctx) override 
         {
-            LogicExp::validateNaN(st);
+            LogicExp::validateNaN(st, ctx);
         }
 };
 
@@ -294,9 +295,9 @@ class Diff: public LogicExp
     public:
         Diff(int l): LogicExp("!=", l) {}
         
-        void validate(SymbolTable& st) override
+        void validate(SymbolTable& st, Context& ctx) override
         {
-            LogicExp::validateNaN(st);
+            LogicExp::validateNaN(st, ctx);
         }
 
 };
@@ -306,9 +307,9 @@ class Greater: public LogicExp
     public:
         Greater(int l): LogicExp(">", l) {}
 
-        void validate(SymbolTable& st) override
+        void validate(SymbolTable& st, Context& ctx) override
         {
-            LogicExp::validateNum(st);
+            LogicExp::validateNum(st, ctx);
         }
 };
     
@@ -317,9 +318,9 @@ class GreaterE: public LogicExp
     public:
         GreaterE(int l): LogicExp(">=", l) {}
 
-        void validate(SymbolTable& st) override
+        void validate(SymbolTable& st, Context& ctx) override
         {
-            LogicExp::validateNum(st);
+            LogicExp::validateNum(st, ctx);
         }
 };
 
@@ -328,9 +329,9 @@ class Less: public LogicExp
     public:
         Less(int l): LogicExp("<", l) {}
 
-        void validate(SymbolTable& st) override
+        void validate(SymbolTable& st, Context& ctx) override
         {
-            LogicExp::validateNum(st);
+            LogicExp::validateNum(st, ctx);
         }
         
 };
@@ -340,9 +341,9 @@ class LessE: public LogicExp
     public:
         LessE(int l): LogicExp("<=", l) {}
 
-        void validate(SymbolTable& st) override
+        void validate(SymbolTable& st, Context& ctx) override
         {
-            LogicExp::validateNum(st);
+            LogicExp::validateNum(st, ctx);
         }
 };
 
@@ -356,7 +357,7 @@ class FunctionCall: public Expression
             this->children = arg->children;
         }
 
-        void validate(SymbolTable& st) override;
+        void validate(SymbolTable& st, Context& ctx) override;
 };
 
 

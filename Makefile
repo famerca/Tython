@@ -4,8 +4,8 @@ BISON = bison -Wcounterexamples --defines=token.h
 
 all: parser
 
-parser: parser.o scanner.o main.o ast.o analysis.o symbolTable.o
-	$(CXX) scanner.o parser.o ast.o main.o analysis.o symbolTable.o -o parser.out
+parser: parser.o scanner.o main.o ast.o analysis.o symbolTable.o context.o
+	$(CXX) scanner.o parser.o ast.o main.o analysis.o context.o symbolTable.o -o parser.out
 
 parser.o: parser.c
 	$(CXX) -c parser.c
@@ -30,6 +30,9 @@ analysis.o: analysis.cpp
 
 symbolTable.o: symbolTable.cpp
 	$(CXX) -c symbolTable.cpp
+
+context.o: context.cpp
+	$(CXX) -c context.cpp
 
 .PHONY:
 clean:

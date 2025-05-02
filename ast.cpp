@@ -8,7 +8,7 @@ std::string reemplazarComillas(const std::string& texto)
 }
 
 
-void Declaration::validate(SymbolTable &st)
+void Declaration::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -22,7 +22,7 @@ void Declaration::validate(SymbolTable &st)
     {
         Expression* expr = dynamic_cast<Expression*>(children[0]);
         
-        expr->validate(st);
+        expr->validate(st, ctx);
 
         if(this->type == "Any")
         {
@@ -41,7 +41,7 @@ void Declaration::validate(SymbolTable &st)
     validated = true;
 }
 
-void Assignment::validate(SymbolTable &st)
+void Assignment::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -64,7 +64,7 @@ void Assignment::validate(SymbolTable &st)
         sem_error("Undeclared identifier: " + this->name, this->line);
 
     Expression *expr = dynamic_cast<Expression*>(children[0]);
-    expr->validate(st);
+    expr->validate(st, ctx);
 
     if(this->type != expr->type)
     {
@@ -76,7 +76,7 @@ void Assignment::validate(SymbolTable &st)
     validated = true;
 }
 
-void Identifier::validate(SymbolTable &st)
+void Identifier::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -119,7 +119,7 @@ Number::Number(std::string v) : Expression(v,"Int")
 }
 
 
-void  Expression::validate(SymbolTable &st)
+void  Expression::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -137,8 +137,8 @@ void  Expression::validate(SymbolTable &st)
         sem_error("Operaciones no permitidas", this->line);
     }
 
-    left->validate(st);
-    right->validate(st);
+    left->validate(st, ctx);
+    right->validate(st, ctx);
 
     if(left->type != right->type)
     {
@@ -152,7 +152,7 @@ void  Expression::validate(SymbolTable &st)
 
 }
 
-void Aritmetic::validate(SymbolTable &st)
+void Aritmetic::validate(SymbolTable& st, Context& ctx)
 {
 
     if(validated)
@@ -174,8 +174,8 @@ void Aritmetic::validate(SymbolTable &st)
         sem_error("Operaciones no permitidas", this->line);
     }
 
-    left->validate(st);
-    right->validate(st);
+    left->validate(st, ctx);
+    right->validate(st, ctx);
 
     if(left->type == "Bool" || right->type == "Bool")
     {
@@ -213,23 +213,23 @@ void Aritmetic::validate(SymbolTable &st)
      validated = true;
 }
 
-void Div::validate(SymbolTable &st)
+void Div::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
 
     Expression* right = dynamic_cast<Expression*>(children[1]);
-    right->validate(st);
+    right->validate(st, ctx);
 
     if(right->value == "0")
     {
         sem_error("Division by 0 not allowed", this->line);
     }
 
-    Aritmetic::validate(st);
+    Aritmetic::validate(st, ctx);
 }
 
-void Sum::validate(SymbolTable& st)
+void Sum::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -243,10 +243,10 @@ void Sum::validate(SymbolTable& st)
     if(left->type == "String" || right->type == "String")
         type = "String";
     
-    Aritmetic::validate(st);
+    Aritmetic::validate(st, ctx);
 }
 
-void BooleanExp::validate(SymbolTable &st)
+void BooleanExp::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -259,8 +259,8 @@ void BooleanExp::validate(SymbolTable &st)
     Expression* left = dynamic_cast<Expression*>(children[0]);
     Expression* right = dynamic_cast<Expression*>(children[1]);
 
-    left->validate(st);
-    right->validate(st);
+    left->validate(st, ctx);
+    right->validate(st, ctx);
 
     if(left->type != "Bool" || right->type != "Bool")
     {
@@ -270,7 +270,7 @@ void BooleanExp::validate(SymbolTable &st)
     validated = true;
 }
 
-void Uminus::validate(SymbolTable &st)
+void Uminus::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -280,7 +280,7 @@ void Uminus::validate(SymbolTable &st)
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
-    left->validate(st);
+    left->validate(st, ctx);
 
     if(left->type != "Int" && left->type != "Float")
         sem_error("Aritmetic operation allowed only for int and float types", this->line);
@@ -288,7 +288,7 @@ void Uminus::validate(SymbolTable &st)
     validated = true;
 }
 
-void Not::validate(SymbolTable &st)
+void Not::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -300,7 +300,7 @@ void Not::validate(SymbolTable &st)
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
 
-    left->validate(st);
+    left->validate(st, ctx);
     
     if(left->type == "Any")
     {
@@ -315,7 +315,7 @@ void Not::validate(SymbolTable &st)
 
 }
 
-void LogicExp::validateNaN(SymbolTable& st)
+void LogicExp::validateNaN(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -333,8 +333,8 @@ void LogicExp::validateNaN(SymbolTable& st)
         sem_error("Operaciones no permitidas", this->line);
     }
 
-    left->validate(st);
-    right->validate(st);
+    left->validate(st, ctx);
+    right->validate(st, ctx);
 
     if(left->type != right->type)
     {
@@ -361,7 +361,7 @@ void LogicExp::validateNaN(SymbolTable& st)
      validated = true;
 }
 
-void LogicExp::validateNum(SymbolTable& st)
+void LogicExp::validateNum(SymbolTable& st, Context& ctx)
 {
 
     if(validated)
@@ -379,8 +379,8 @@ void LogicExp::validateNum(SymbolTable& st)
         sem_error("Operaciones no permitidas", this->line);
     }
 
-    left->validate(st);
-    right->validate(st);
+    left->validate(st, ctx);
+    right->validate(st, ctx);
 
     if(left->type == "Any" || right->type == "Any")
     {
@@ -403,7 +403,7 @@ void LogicExp::validateNum(SymbolTable& st)
     validated = true;
 }
 
-void Definition::validate(SymbolTable& st)
+void Definition::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -440,7 +440,7 @@ void Definition::validate(SymbolTable& st)
     validated = true;
 }
 
-void Block::validate(SymbolTable& st)
+void Block::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -487,7 +487,7 @@ void Block::validate(SymbolTable& st)
     validated = true;
 }
 
-void Return::validate(SymbolTable& st)
+void Return::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -504,7 +504,7 @@ void Return::validate(SymbolTable& st)
     }
 
     Expression* expr = dynamic_cast<Expression*>(children[0]);
-    expr->validate(st);
+    expr->validate(st, ctx);
 
     if(expr->type != type)
     {
@@ -517,7 +517,7 @@ void Return::validate(SymbolTable& st)
     validated = true;
 }
 
-void FunctionCall::validate(SymbolTable& st)
+void FunctionCall::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
@@ -540,7 +540,7 @@ void FunctionCall::validate(SymbolTable& st)
             for(int i = 0; i < children.size(); ++i)
             {
                 Expression* expr = dynamic_cast<Expression*>(children[i]);
-                expr->validate(st);
+                expr->validate(st, ctx);
 
                 if(expr->type != def->parameters[i]->type)
                 {

@@ -4,6 +4,7 @@
 #include <string>
 #include "ast.hpp"
 #include "symbolTable.hpp"
+#include "context.hpp"
 
 
 void sem_error(const std::string &s, int line);
@@ -13,6 +14,7 @@ void sem_warning(const std::string &s, int line);
 class Analysis {
     private:
         SymbolTable st;
+        Context context;
         Ast* ast;
     
     public:
