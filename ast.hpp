@@ -128,7 +128,19 @@ class Continue: public Ast
 class For: public Statement
 {
     public:
-        For() : Statement("For") {}
+        Parameter *iterator;
+       
+        For(std::string i) : Statement("For") 
+        {
+            iterator = new Parameter(i, "Any");
+        }
+
+        ~For()
+        {
+            Ast::~Ast();
+            delete iterator;
+        }
+        
         void validate(SymbolTable& st, Context& ctx) override;
 };
 

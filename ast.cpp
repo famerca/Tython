@@ -254,6 +254,8 @@ void BooleanExp::validate(SymbolTable& st, Context& ctx)
     if(children.size() != 2)
     {
         sem_error("Operation not allowed", this->line);
+        validated = true;
+        return;
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
@@ -443,11 +445,12 @@ void Block::validate(SymbolTable& st, Context& ctx)
 {
     if(validated)
         return;
-    Ast *def = ctx.current("function");
 
-    if(def != nullptr)
+    Ast *node = ctx.current("function");
+
+    if(node != nullptr)
     {
-        Definition *d = dynamic_cast<Definition *>(def);
+        Definition *d = dynamic_cast<Definition *>(node);
 
         for(Parameter* param : d->parameters)
         {
@@ -474,6 +477,15 @@ void Block::validate(SymbolTable& st, Context& ctx)
 
         sem_error("This function must return a " + d->type, this->line);
         
+
+    }
+
+    node = ctx.current("for");
+
+    if(node != nullptr)
+    {
+        For *fornode = dynamic_cast<For *>(node);
+        st.insert(fornode->iterator, fornode->iterator->name, false);
 
     }
 

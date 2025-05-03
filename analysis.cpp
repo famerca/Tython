@@ -19,8 +19,14 @@ Analysis::Analysis(Ast *a) : ast(a), st()
 
     st.insert(print, "print", true);
 
-    // Definition *range = new Definition("range");
-    // range->parameters.push_back(new Parameter)
+    Definition *range = new Definition("range");
+    range->parameters.push_back(new Parameter("Step", "Int"));
+    range->parameters.push_back(new Parameter("Limit", "Int"));
+
+    range->addChild(range->parameters[0]);
+    range->addChild(range->parameters[1]);
+
+    st.insert(range, "range", true);
 
     Resolution(a);
 

@@ -171,7 +171,7 @@ stmt_if:
 
 stmt_for:
     TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
-        $$ = new For();
+        $$ = new For(*$2);
         $$->addChild($4);
         $$->addChild($5);
     }
@@ -342,7 +342,7 @@ expression:
 
     }
     | TOKEN_NOT expression {
-        $$ = new Or(@1.first_line);
+        $$ = new Not(@1.first_line);
         $$->addChild($2);
 
     }
