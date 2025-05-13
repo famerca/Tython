@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/parser.out",
-            "args": ["${workspaceFolder}/tests/example6.ty"],
+            "args": ["${workspaceFolder}/tests/example4.ty"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

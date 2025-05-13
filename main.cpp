@@ -36,6 +36,10 @@ int main(int argc, char* argv[])
         //printf("Parse successful!\n\n\n\n");
         ast->toDot(std::cout);
         Analysis analysis(ast);
+        printf("OUTPUT\n\n");
+        std::string ident = "";
+        std::cout << ast->output(ident);
+        
     }
     else
     {

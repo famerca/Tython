@@ -1,6 +1,6 @@
 def print_multiple(number: Int, str: String):
     for i in range(1, number):
-        print(str +"impresion" + i)
+        print(str + "impresion" + i)
 
 number: Int = 10
 print_multiple(number, "Hola")

@@ -157,12 +157,12 @@ statement:
 
 stmt_if:
     TOKEN_IF expression block %prec LOWER_THAN_ELSE{
-        $$ = new Statement("If");
+        $$ = new If(false);
         $$->addChild($2);
         $$->addChild($3);
     }
     | TOKEN_IF expression block TOKEN_ELSE block{
-        $$ = new Statement("If Else");
+        $$ = new If(true);
         $$->addChild($2);
         $$->addChild($3);
         $$->addChild($5);

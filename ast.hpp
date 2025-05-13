@@ -56,6 +56,8 @@ class Ast
             //std::cout << "Validate " << label << std::endl;
             validated = true;
         }
+
+        virtual std::string output( const std::string &indent );
 };
 
 
@@ -65,7 +67,24 @@ class Statement: public Ast {
             this->label = this->label + ": " + label;
         }
 
-    
+        //for debug only
+        std::string output(const std::string &indent) override
+        {
+            return indent + "statement";
+        }
+};
+
+class If: public Statement
+{
+    public:
+        bool _else;
+        If(bool e): Statement("If"), _else(e)
+        {
+            if(e)
+                this->label = "If else";
+        }
+
+        std::string output(const std::string &indent) override;
 };
 
 class Definition: public Ast {
@@ -89,6 +108,7 @@ class Block: public Ast {
         }
 
         void validate(SymbolTable& st, Context& ctx) override;
+        std::string output(const std::string &indent) override;
 };
 
 class Parameter : public Ast {
@@ -160,6 +180,8 @@ class Declaration: public Statement{
         {}
 
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output(const std::string &indent) override;
      
 };
 
@@ -172,6 +194,8 @@ class Assignment: public Statement
         Assignment(std::string n) : Statement("Assignment"), name(n), type("Any"){}
 
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output(const std::string &indent) override;
 };
 
 class Expression: public Ast {
@@ -189,7 +213,10 @@ class Expression: public Ast {
         
         virtual void validate(SymbolTable& st, Context& ctx);
 
+        //for debug
+        std::string output( const std::string &indent ) override;
 };
+
 
 class Number: public Expression {
     public:
@@ -198,18 +225,20 @@ class Number: public Expression {
         void validate(SymbolTable& st, Context& ctx) override{
             validated = true;
         };
+
 };
 
 class String: public Expression
 {
     public:
         String(std::string v) : Expression(v, "String") {
-            this->label = "String: " + v;
+            this->label = "String";
         }
 
         void validate(SymbolTable& st, Context& ctx) override{
             validated = true;
         };
+    
 };
 
 class Identifier: public Expression
@@ -221,15 +250,25 @@ class Identifier: public Expression
         }
 
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output(const std::string &indent) override
+        {
+            return indent + value;
+        }
 };
 
 class Aritmetic: public Expression
 {
     public:
+
         Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
             this->label = op + ": Int";
         }
+
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output( const std::string &indent ) override;
+        
 };
 
 class Sum: public Aritmetic
@@ -283,6 +322,8 @@ class BooleanExp: public Expression
         }
 
     void validate(SymbolTable& st, Context& ctx) override;
+
+    std::string output( const std::string &indent ) override;
 };
 
 class And: public BooleanExp
@@ -304,6 +345,9 @@ class Not: public BooleanExp
         Not(int l): BooleanExp("Not", l) {}
 
     void validate(SymbolTable& st, Context& ctx) override;
+
+    std::string output( const std::string &indent ) override;
+
 };
 
 class LogicExp: public Expression
@@ -313,6 +357,9 @@ class LogicExp: public Expression
 
         void validateNaN(SymbolTable& st, Context& ctx);
         void validateNum(SymbolTable& st, Context& ctx);
+        
+        std::string output( const std::string &indent ) override;
+        
 };
 
 class Compare: public LogicExp
@@ -395,6 +442,8 @@ class FunctionCall: public Expression
         }
 
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output( const std::string &indent ) override;
 };
 
 

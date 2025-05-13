@@ -12,7 +12,7 @@ void sem_warning(const std::string &s, int line)
 
 Analysis::Analysis(Ast *a) : ast(a), st() 
 {
-    //Symblos iniciales 
+    //Symbolos iniciales 
     Definition *print = new Definition("print");
     print->parameters.push_back(new Parameter("printable", "Any"));
     print->children.push_back(print->parameters[0]);
@@ -31,6 +31,7 @@ Analysis::Analysis(Ast *a) : ast(a), st()
     Resolution(a);
 
     delete print;
+    delete range;
 }
 
 

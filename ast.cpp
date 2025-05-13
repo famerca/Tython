@@ -1,5 +1,43 @@
 #include "ast.hpp"
 
+std::string Ast::output(const std::string &indent )
+{
+    std::string out;
+
+    for(Ast *child : children)
+    {
+        out += indent + child->output(indent) + "\n";
+    }
+
+    return out;
+
+}
+
+std::string If::output(const std::string &indent)
+{
+    std::string out = indent + "if " + children[0]->output("") + ":\n";
+    out += children[1]->output(indent);
+    if(_else)
+    {
+        out += indent + "else:\n";
+        out += children[2]->output(indent);
+    }
+
+    return out;
+}
+
+std::string Block::output(const std::string &indent)
+{
+    std::string out;
+
+    for(Ast *child : children)
+    {
+        out += indent + child->output(indent + "    ") + "\n";
+    }
+
+    return out;
+}
+
 std::string reemplazarComillas(const std::string& texto)
 {
     std::string resultado = texto;
@@ -40,6 +78,13 @@ void Declaration::validate(SymbolTable& st, Context& ctx)
 
     validated = true;
 }
+std::string Declaration::output(const std::string &indent)
+{
+    if(children.size() == 0)
+        return indent + name;
+    else
+        return indent + name + " = " + dynamic_cast<Expression *>(children[0])->output("");
+}
 
 void Assignment::validate(SymbolTable& st, Context& ctx)
 {
@@ -56,9 +101,15 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
     if(symbol)
     {
         if(symbol->isFunction)
+        {
             sem_error("Assignment to function", this->line);
-        
-        this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
+            return;
+        }
+
+        if(symbol->nodo->label == "Parameter")
+            this->type = dynamic_cast<Parameter*>(symbol->nodo)->type;
+        else
+            this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
     }
     else
         sem_error("Undeclared identifier: " + this->name, this->line);
@@ -106,7 +157,7 @@ void Identifier::validate(SymbolTable& st, Context& ctx)
 
 Number::Number(std::string v) : Expression(v,"Int")
 {
-    this->label = "number: " + v;
+    this->label = "Number";
 
     for(unsigned int i = 0; i < v.length(); ++i)
     {
@@ -118,6 +169,60 @@ Number::Number(std::string v) : Expression(v,"Int")
     }
 }
 
+
+std::string Expression::output(const std::string &indent)
+{
+
+    if(label == "Number" || label == "String")
+        return indent + value;
+    
+    return indent + "expresion";
+
+}
+
+std::string Assignment::output(const std::string &indent)
+{
+    return indent + name + " = " + children[0]->output("");
+}
+
+std::string Aritmetic::output( const std::string &indent ) 
+{
+
+    return indent + children[0]->output("") + " " + this->value + " " + children[1]->output("");
+
+}
+
+std::string BooleanExp::output( const std::string &indent ) 
+{
+    return indent + children[0]->output("") + " " + this->value + " " + children[1]->output("");
+}
+
+std::string Not::output( const std::string &indent ) 
+{
+    return indent + "not (" + children[0]->output("") + ")";
+}
+
+std::string LogicExp::output( const std::string &indent ) 
+{
+    return indent + children[0]->output("") + " " + this->value + " " + children[1]->output("");
+}
+
+std::string FunctionCall::output( const std::string &indent )
+{
+    std::string args;
+    bool first = true;
+
+    for(Ast *child : children)
+    {
+        if (!first) {
+            args += ",";
+        }
+        args += child->output("");
+        first = false;
+    }
+
+    return indent + value + "(" + args + ")";
+}
 
 void  Expression::validate(SymbolTable& st, Context& ctx)
 {
