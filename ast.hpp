@@ -97,6 +97,7 @@ class Definition: public Ast {
         {}
 
         void validate(SymbolTable& st, Context& ctx) override;
+        std::string output(const std::string &indent) override;
 };
 
 class Block: public Ast {
@@ -127,6 +128,8 @@ class Return: public Ast
         {}
 
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output(const std::string &indent) override;
 };
 
 class Break: public Ast
@@ -135,6 +138,11 @@ class Break: public Ast
         Break() : Ast("Break") {}
 
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output(const std::string &indent) override
+        {
+            return indent + "break";
+        }
 };
 
 class Continue: public Ast
@@ -155,6 +163,11 @@ class For: public Statement
             iterator = new Parameter(i, "Any");
         }
 
+        For(std::string i, std::string t) : Statement("For") 
+        {
+            iterator = new Parameter(i, t);
+        }
+
         ~For()
         {
             Ast::~Ast();
@@ -162,6 +175,8 @@ class For: public Statement
         }
         
         void validate(SymbolTable& st, Context& ctx) override;
+
+        std::string output(const std::string &indent) override;
 };
 
 class While: public Statement
@@ -169,6 +184,7 @@ class While: public Statement
     public:
         While() : Statement("While") {}
         void validate(SymbolTable& st, Context& ctx) override;
+        std::string output(const std::string &indent) override;
 };
 
 class Declaration: public Statement{

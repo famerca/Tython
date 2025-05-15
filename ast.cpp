@@ -32,10 +32,15 @@ std::string Block::output(const std::string &indent)
 
     for(Ast *child : children)
     {
-        out += indent + child->output(indent + "    ") + "\n";
+        out += child->output(indent + "    ") + "\n";
     }
 
     return out;
+}
+
+std::string For::output(const std::string &indent)
+{
+    return indent + "for " + iterator->name + " in " + children[0]->output("") + ":\n" + children[1]->output(indent);
 }
 
 std::string reemplazarComillas(const std::string& texto)
@@ -544,6 +549,37 @@ void Definition::validate(SymbolTable& st, Context& ctx)
 
     validated = true;
 
+}
+
+std::string Definition::output(const std::string &indent)
+{
+    std::string params;
+    bool first = true;
+
+    for(Parameter* param : parameters)
+    {
+        if (!first) {
+            params += ",";
+        }
+        params += param->name;
+        first = false;
+    }
+
+    return indent + "def " + name + "(" + params + "):\n" + children[0]->output(indent) + "\n";
+}
+
+
+std::string While::output(const std::string &indent)
+{
+    return indent + "while " + children[0]->output("") + ":\n" + children[1]->output(indent);
+}
+
+std::string Return::output(const std::string &indent)
+{
+    if(children.size() > 0)
+        return indent + "return " + children[0]->output("");
+
+    return indent + "return";
 }
 
 void Block::validate(SymbolTable& st, Context& ctx)

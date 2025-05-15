@@ -170,7 +170,12 @@ stmt_if:
 ;
 
 stmt_for:
-    TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
+    TOKEN_FOR TOKEN_IDENTIFIER TOKEN_COLON TOKEN_TYPE TOKEN_IN expression  block{
+        $$ = new For(*$2, *$4);
+        $$->addChild($6);
+        $$->addChild($7);
+    }
+    | TOKEN_FOR TOKEN_IDENTIFIER TOKEN_IN expression  block{
         $$ = new For(*$2);
         $$->addChild($4);
         $$->addChild($5);
