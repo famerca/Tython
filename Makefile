@@ -5,7 +5,7 @@ BISON = bison -Wcounterexamples --defines=token.h
 all: parser
 
 parser: parser.o scanner.o main.o ast.o analysis.o symbolTable.o context.o
-	$(CXX) scanner.o parser.o ast.o main.o analysis.o context.o symbolTable.o -o parser.out
+	$(CXX) scanner.o parser.o ast.o main.o analysis.o context.o symbolTable.o -o tython
 
 parser.o: parser.c
 	$(CXX) -c parser.c
@@ -36,4 +36,4 @@ context.o: context.cpp
 
 .PHONY:
 clean:
-	$(RM) *.o parser.c parser.output token.h scanner.c parser.out 
+	$(RM) *.o parser.c parser.output token.h scanner.c tython 

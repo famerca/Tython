@@ -1,18 +1,21 @@
 #include "analysis.hpp"
 
-void sem_error(const std::string &s, int line)
+void sem_error(const std::string &s, Ast *node)
 {
-    std::cout << "Line " << line << ": Error: " << s << std::endl;
+    std::cout << "Line " << node->line << ": Error: " << s << std::endl;
+    node->validated = true;
+    throw std::runtime_error("semantic error");
 }
 
-void sem_warning(const std::string &s, int line)
+void sem_warning(const std::string &s, Ast *node)
 {
-    std::cout << "Line " << line << ": Warning: " << s << std::endl;
+    std::cout << "Line " << node->line << ": Warning: " << s << std::endl;
 }
 
-Analysis::Analysis(Ast *a) : ast(a), st() 
+Analysis::Analysis(Ast *a) : ast(a), st()
 {
     //Symbolos iniciales 
+    error = false;
     Definition *print = new Definition("print");
     print->parameters.push_back(new Parameter("printable", "Any"));
     print->children.push_back(print->parameters[0]);
@@ -43,7 +46,14 @@ void Analysis::Resolution(Ast* node)
         st.enterScope();
     }
 
-    node->validate(st, context);
+    try{
+        node->validate(st, context);
+    }catch(const std::runtime_error &err)
+    {
+        error = true;
+    }
+
+
     for (Ast* child : node->children) {
         Resolution(child);
     }

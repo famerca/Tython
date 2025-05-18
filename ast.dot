@@ -1,29 +1,19 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="stat: Declaration"]
-  node2 [label="String: 'Hello World'"]
+  node2 [label="String"]
   node1 -> node2;
   node0 -> node1;
-  node3 [label="stat: If"]
-  node4 [label="expression"]
-  node5 [label="Identifier: variable"]
+  node3 [label="stat: Declaration"]
+  node4 [label="/: Int"]
+  node5 [label="Number"]
   node4 -> node5;
-  node6 [label="String: 'Hello World'"]
+  node6 [label="Number"]
   node4 -> node6;
   node3 -> node4;
-  node7 [label="Block"]
-  node8 [label="expression"]
-  node9 [label="String: 'Variable is equal to Hello World'"]
-  node8 -> node9;
-  node7 -> node8;
-  node10 [label="stat: Assignment"]
-  node11 [label="String: 'Hello Worll'"]
-  node10 -> node11;
-  node7 -> node10;
-  node12 [label="expression"]
-  node13 [label="Identifier: variable"]
-  node12 -> node13;
-  node7 -> node12;
-  node3 -> node7;
   node0 -> node3;
+  node7 [label="stat: Declaration"]
+  node8 [label="Number"]
+  node7 -> node8;
+  node0 -> node7;
 }

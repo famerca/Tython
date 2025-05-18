@@ -58,7 +58,7 @@ void Declaration::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() > 1)
     {
-        sem_error("Declaration can only have one expression", this->line);
+        sem_error("Declaration can only have one expression", this);
     }
 
     if(children.size() == 1)
@@ -69,16 +69,16 @@ void Declaration::validate(SymbolTable& st, Context& ctx)
 
         if(this->type == "Any")
         {
-            sem_warning("Any type is not recommended", this->line);
+            sem_warning("Any type is not recommended", this);
         }else if(this->type != expr->type)
         {
-            sem_error("Type mismatch in declaration", this->line);
+            sem_error("Type mismatch in declaration", this);
         }
     }
 
     if(!st.insert(this, this->name, false))
     {
-        sem_warning("Redeclaration of " + this->name, this->line);
+        sem_warning("Redeclaration of " + this->name, this);
     }
 
     validated = true;
@@ -98,7 +98,7 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() != 1)
     {
-        sem_error("Declaration can only have one expression", this->line);
+        sem_error("Declaration can only have one expression", this);
     }
 
     auto symbol = st.lookup(this->name);
@@ -107,7 +107,7 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
     {
         if(symbol->isFunction)
         {
-            sem_error("Assignment to function", this->line);
+            sem_error("Assignment to function", this);
             return;
         }
 
@@ -117,7 +117,7 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
             this->type = dynamic_cast<Declaration*>(symbol->nodo)->type;
     }
     else
-        sem_error("Undeclared identifier: " + this->name, this->line);
+        sem_error("Undeclared identifier: " + this->name, this);
 
     Expression *expr = dynamic_cast<Expression*>(children[0]);
     expr->validate(st, ctx);
@@ -126,7 +126,7 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
     {
         std::string error = "Training assignment " + expr->type + " to " + this->name + ":" + this->type + "\n";
         
-        sem_error(error, this->line);
+        sem_error(error, this);
     }
 
     validated = true;
@@ -142,7 +142,7 @@ void Identifier::validate(SymbolTable& st, Context& ctx)
     if(symbol)
     {
         if(symbol->isFunction)
-            sem_error("Identifier cannot be used as function", this->line);
+            sem_error("Identifier cannot be used as function", this);
         
         
         if(symbol->nodo->label == "Parameter")
@@ -155,7 +155,7 @@ void Identifier::validate(SymbolTable& st, Context& ctx)
     
     }
     else
-        sem_error("Undeclared identifier: " + this->value, this->line);
+        sem_error("Undeclared identifier: " + this->value, this);
 
     validated = true;
 }
@@ -236,7 +236,7 @@ void  Expression::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() != 2)
     {
-        sem_error("Operation for", this->line);
+        sem_error("Operation for", this);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
@@ -244,7 +244,7 @@ void  Expression::validate(SymbolTable& st, Context& ctx)
     
     if(left == nullptr || right == nullptr)
     {
-        sem_error("Operaciones no permitidas", this->line);
+        sem_error("Operaciones no permitidas", this);
     }
 
     left->validate(st, ctx);
@@ -255,7 +255,7 @@ void  Expression::validate(SymbolTable& st, Context& ctx)
         std::string error = "En la operacion '" + this->label + "' los operandos deben ser del mismo tipo \n";
         error += "Tipo izquierdo: " + left->type + "\n";
         error += "Tipo derecho: " + right->type + "\n";
-        sem_error(error, this->line);
+        sem_error(error, this);
     }
 
     validated = true;
@@ -270,7 +270,7 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
     
     if(children.size() != 2)
     {
-        sem_error("Operacion no permitida", this->line);
+        sem_error("Operacion no permitida", this);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
@@ -281,7 +281,7 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
     
     if(left == nullptr || right == nullptr)
     {
-        sem_error("Operaciones no permitidas", this->line);
+        sem_error("Operaciones no permitidas", this);
     }
 
     left->validate(st, ctx);
@@ -289,7 +289,7 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
 
     if(left->type == "Bool" || right->type == "Bool")
     {
-        sem_error("Operacion no permitida para tipos booleanos", this->line);
+        sem_error("Operacion no permitida para tipos booleanos", this);
     }
 
 
@@ -298,7 +298,7 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
     {
         if(left->type == "Any" || right->type == "Any")
         {
-            sem_warning("Opertation with Any type is not recommended", this->line);
+            sem_warning("Opertation with Any type is not recommended", this);
         }else
         {
 
@@ -306,14 +306,14 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
             {
 
                 std::string error = "Operation between int and float loses precision \n";
-                sem_warning(error, this->line);
+                sem_warning(error, this);
 
             }else
             {
                 std::string error = "En la operacion '" + this->label + "' los operandos deben ser del mismo tipo \n";
                 error += "Tipo izquierdo: " + left->type + "\n";
                 error += "Tipo derecho: " + right->type + "\n";
-                sem_error(error, this->line);
+                sem_error(error, this);
             }
             
         }
@@ -333,7 +333,7 @@ void Div::validate(SymbolTable& st, Context& ctx)
 
     if(right->value == "0")
     {
-        sem_error("Division by 0 not allowed", this->line);
+        sem_error("Division by 0 not allowed", this);
     }
 
     Aritmetic::validate(st, ctx);
@@ -363,7 +363,7 @@ void BooleanExp::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() != 2)
     {
-        sem_error("Operation not allowed", this->line);
+        sem_error("Operation not allowed", this);
         validated = true;
         return;
     }
@@ -376,7 +376,7 @@ void BooleanExp::validate(SymbolTable& st, Context& ctx)
 
     if(left->type != "Bool" || right->type != "Bool")
     {
-        sem_error("Binary operation allowed only for boolean type", this->line);
+        sem_error("Binary operation allowed only for boolean type", this);
     }
 
     validated = true;
@@ -388,14 +388,14 @@ void Uminus::validate(SymbolTable& st, Context& ctx)
         return;
     if(children.size() !=1)
     {
-        sem_error("Operation not allowed", this->line);
+        sem_error("Operation not allowed", this);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
     left->validate(st, ctx);
 
     if(left->type != "Int" && left->type != "Float")
-        sem_error("Aritmetic operation allowed only for int and float types", this->line);
+        sem_error("Aritmetic operation allowed only for int and float types", this);
 
     validated = true;
 }
@@ -407,7 +407,7 @@ void Not::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() !=1)
     {
-        sem_error("Operation not allowed", this->line);
+        sem_error("Operation not allowed", this);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
@@ -416,12 +416,12 @@ void Not::validate(SymbolTable& st, Context& ctx)
     
     if(left->type == "Any")
     {
-        sem_warning("Opertation with Any type is not recommended", this->line);
+        sem_warning("Opertation with Any type is not recommended", this);
         return;
     }
 
     if(left->type != "Bool")
-        sem_error("Binary operation allowed only for boolean type", this->line);
+        sem_error("Binary operation allowed only for boolean type", this);
 
     validated = true;
 
@@ -434,7 +434,7 @@ void LogicExp::validateNaN(SymbolTable& st, Context& ctx)
 
     if(children.size() != 2)
     {
-        sem_error("Operation not allowed", this->line);
+        sem_error("Operation not allowed", this);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
@@ -442,7 +442,7 @@ void LogicExp::validateNaN(SymbolTable& st, Context& ctx)
     
     if(left == nullptr || right == nullptr)
     {
-        sem_error("Operaciones no permitidas", this->line);
+        sem_error("Operaciones no permitidas", this);
     }
 
     left->validate(st, ctx);
@@ -452,7 +452,7 @@ void LogicExp::validateNaN(SymbolTable& st, Context& ctx)
     {
         if(left->type == "Any" || right->type == "Any")
         {
-            sem_warning("Opertation with Any type is not recommended", this->line);
+            sem_warning("Opertation with Any type is not recommended", this);
         }else
         {
 
@@ -462,7 +462,7 @@ void LogicExp::validateNaN(SymbolTable& st, Context& ctx)
                 std::string error = "Logic operation '" + this->label + "' for different types not allowed \n";
                 error += "Type left: " + left->type + "\n";
                 error += "Type right: " + right->type + "\n";
-                sem_error(error, this->line);
+                sem_error(error, this);
 
             }
             
@@ -480,7 +480,7 @@ void LogicExp::validateNum(SymbolTable& st, Context& ctx)
         return;
     if(children.size() != 2)
     {
-        sem_error("Operation not allowed", this->line);
+        sem_error("Operation not allowed", this);
     }
 
     Expression* left = dynamic_cast<Expression*>(children[0]);
@@ -488,7 +488,7 @@ void LogicExp::validateNum(SymbolTable& st, Context& ctx)
     
     if(left == nullptr || right == nullptr)
     {
-        sem_error("Operaciones no permitidas", this->line);
+        sem_error("Operaciones no permitidas", this);
     }
 
     left->validate(st, ctx);
@@ -496,7 +496,7 @@ void LogicExp::validateNum(SymbolTable& st, Context& ctx)
 
     if(left->type == "Any" || right->type == "Any")
     {
-        sem_warning("Opertation with Any type is not recommended", this->line);
+        sem_warning("Opertation with Any type is not recommended", this);
     }else
     {
 
@@ -506,7 +506,7 @@ void LogicExp::validateNum(SymbolTable& st, Context& ctx)
             std::string error = "Logic operation '" + this->label + "' for non-numeric types not allowed \n";
             error += "Type left: " + left->type + "\n";
             error += "Type right: " + right->type + "\n";
-            sem_error(error, this->line);
+            sem_error(error, this);
 
         }
         
@@ -522,7 +522,7 @@ void Definition::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() == 0)
     {
-        sem_error("Invalid definition", this->line);
+        sem_error("Invalid definition", this);
     }
 
     if(children.size() == 2)
@@ -535,14 +535,14 @@ void Definition::validate(SymbolTable& st, Context& ctx)
 
             if(paramAst->type == "Any")
             {
-                sem_warning("Type Any is not recommended", this->line);
+                sem_warning("Type Any is not recommended", this);
             }
         }
     }
 
     if(!st.insert(this, this->name, true))
     {
-        sem_error("Redeclaration of function " + this->name, this->line);
+        sem_error("Redeclaration of function " + this->name, this);
     }
 
     ctx.push("function", this);
@@ -616,7 +616,7 @@ void Block::validate(SymbolTable& st, Context& ctx)
             
         }
 
-        sem_error("This function must return a " + d->type, this->line);
+        sem_error("This function must return a " + d->type, this);
         
 
     }
@@ -643,7 +643,7 @@ void Return::validate(SymbolTable& st, Context& ctx)
 
     if(f == nullptr)
     {
-        sem_error("Return statement out of function context", line);
+        sem_error("Return statement out of function context", this);
         validated = true;
         return;
 
@@ -659,7 +659,7 @@ void Return::validate(SymbolTable& st, Context& ctx)
 
     if(children.size() != 1 )
     {
-        sem_error("Invalid return", this->line);
+        sem_error("Invalid return", this);
     }
 
     Expression* expr = dynamic_cast<Expression*>(children[0]);
@@ -670,7 +670,7 @@ void Return::validate(SymbolTable& st, Context& ctx)
         std::string error = "Return type mismatch in function \n";
         error += "Expected: " + fun->type + "\n";
         error += "Returned: " + expr->type + "\n";
-        sem_error(error, this->line);
+        sem_error(error, this);
     }
 
     validated = true;
@@ -693,7 +693,7 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
 
             if(children.size() != def->parameters.size())
             {
-                sem_error("Invalid arguments count", this->line);
+                sem_error("Invalid arguments count", this);
             }
 
             for(int i = 0; i < children.size(); ++i)
@@ -706,7 +706,7 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
 
                 if(expr->type == "Any")
                 {
-                    sem_warning("Use of Any type not recommended", line);
+                    sem_warning("Use of Any type not recommended", this);
                     continue;
                 }
 
@@ -715,14 +715,14 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
                     std::string error = "Invalid argument type in function call \n";
                     error += "Expected: " + def->parameters[i]->type + "\n";
                     error += "Received: " + expr->type + "\n";
-                    sem_error(error, this->line);
+                    sem_error(error, this);
                 }
             }
             
         }else
-            sem_error("Cannot call non-function", this->line);
+            sem_error("Cannot call non-function", this);
     } else
-        sem_error("Undefined function: " + value, this->line);
+        sem_error("Undefined function: " + value, this);
 
     
 
@@ -756,7 +756,7 @@ void Break::validate(SymbolTable& st, Context& ctx)
 
     if(!ctx.contains("for") && !ctx.contains("while"))
     {
-        sem_error("Break statement out of loop", line);
+        sem_error("Break statement out of loop", this);
     }
     
     validated = true;
@@ -769,7 +769,7 @@ void Continue::validate(SymbolTable& st, Context& ctx)
 
     if(!ctx.contains("for") && !ctx.contains("while"))
     {
-        sem_error("Continue statement out of loop", line);
+        sem_error("Continue statement out of loop", this);
     }
     
     validated = true;
