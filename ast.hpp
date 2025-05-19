@@ -244,6 +244,19 @@ class Number: public Expression {
 
 };
 
+class Boolean: public Expression
+{
+    public:
+        Boolean(std::string v) : Expression(v, "Bool") {
+            this->label = "Boolean";
+        }
+
+        void validate(SymbolTable& st, Context& ctx) override{
+            validated = true;
+        };
+
+};
+
 class String: public Expression
 {
     public:
@@ -278,7 +291,7 @@ class Aritmetic: public Expression
     public:
 
         Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
-            this->label = op + ": Int";
+            this->label = op;
         }
 
         void validate(SymbolTable& st, Context& ctx) override;
@@ -319,6 +332,9 @@ class Div: public Aritmetic
         }
     
     void validate(SymbolTable& st, Context& ctx) override;
+
+    std::string output( const std::string &indent ) override;
+    
 };
 
 class Uminus: public Aritmetic

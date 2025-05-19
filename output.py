@@ -1,11 +1,16 @@
-max = 0
-str = "Hello "
-def print_cond(number,str):
-    if number > 0:
-        print(str)
-    else:
-        print(number)
+i = 0
+while True:
+    i = i + 1
+    print(i)
+    if i > 10:
+        break
+
+
+def loop(b):
+    i = 0
+    while i < b:
+        i = i + 1
+        return
 
 
 
-print_cond(max,str)

@@ -18,6 +18,7 @@ IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 TEXT       \"({DIGIT}|{LETTER}|{SPACE})*\"
 NUMBER      {DIGIT}+("."{DIGIT}+)?
 TYPE        Int|Float|String|Bool|Any
+Boolean     True|False
 
 %%
 
@@ -131,6 +132,11 @@ TYPE        Int|Float|String|Bool|Any
 {TYPE}       {  yylval.str = new std::string(yytext);
                 return TOKEN_TYPE; 
              }
+{Boolean}   { 
+    saw_linebreak = 0; 
+    yylval.str = new std::string(yytext);
+    return TOKEN_BOOLEAN;
+}
 {IDENTIFIER} {     
                 if(pending_linebreak)
                 {

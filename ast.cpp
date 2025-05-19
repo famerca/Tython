@@ -86,9 +86,20 @@ void Declaration::validate(SymbolTable& st, Context& ctx)
 std::string Declaration::output(const std::string &indent)
 {
     if(children.size() == 0)
-        return indent + name;
+    {
+        if(type == "Int")
+            return indent + name + " = 0";
+        if(type == "Float")
+            return indent + name + " = 0.0";
+        if(type == "String" )
+            return indent + name + " = \"\"";
+        
+        return indent + name + " = False";
+    }
     else
+    {
         return indent + name + " = " + dynamic_cast<Expression *>(children[0])->output("");
+    }
 }
 
 void Assignment::validate(SymbolTable& st, Context& ctx)
@@ -122,11 +133,19 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
     Expression *expr = dynamic_cast<Expression*>(children[0]);
     expr->validate(st, ctx);
 
-    if(this->type != expr->type)
+    if(this->type != "Any" && this->type != expr->type)
     {
-        std::string error = "Training assignment " + expr->type + " to " + this->name + ":" + this->type + "\n";
+
+        if(this->type == "Int" && expr->type == "Float")
+            sem_warning("Assignment from float to int", this);
+        else if(this->type == "Float" && expr->type == "Int")
+            sem_warning("Assignment from int to float", this);
+        else
+        {
+            std::string error = "Training assignment " + expr->type + " to " + this->name + ":" + this->type + "\n";
+            sem_error(error, this);
+        }
         
-        sem_error(error, this);
     }
 
     validated = true;
@@ -178,7 +197,7 @@ Number::Number(std::string v) : Expression(v,"Int")
 std::string Expression::output(const std::string &indent)
 {
 
-    if(label == "Number" || label == "String")
+    if(label == "Number" || label == "String" || label == "Boolean")
         return indent + value;
     
     return indent + "expresion";
@@ -195,6 +214,14 @@ std::string Aritmetic::output( const std::string &indent )
 
     return indent + children[0]->output("") + " " + this->value + " " + children[1]->output("");
 
+}
+
+std::string Div::output( const std::string &indent ) 
+{
+    if(type == "Int")
+        return indent + children[0]->output("") + " // " + children[1]->output("");
+
+    return indent + children[0]->output("") + " / " + children[1]->output("");
 }
 
 std::string BooleanExp::output( const std::string &indent ) 
@@ -289,10 +316,13 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
 
     if(left->type == "Bool" || right->type == "Bool")
     {
-        sem_error("Operacion no permitida para tipos booleanos", this);
+        sem_error("Operation " + this->label + " not allowed for boolean type", this);
     }
 
-
+    if(left->type == "String" || right->type == "String")
+    {
+        sem_error("Operation " + this->label + " not allowed for string type", this);
+    }
 
     if(left->type != right->type)
     {
@@ -336,6 +366,11 @@ void Div::validate(SymbolTable& st, Context& ctx)
         sem_error("Division by 0 not allowed", this);
     }
 
+    if(right->type == "Int" && right->type == "Int")
+        type = "Int";
+    else
+        type = "Float";
+
     Aritmetic::validate(st, ctx);
 }
 
@@ -347,13 +382,48 @@ void Sum::validate(SymbolTable& st, Context& ctx)
     Expression* left = dynamic_cast<Expression*>(children[0]);
     Expression* right = dynamic_cast<Expression*>(children[1]);
 
+    if(left == nullptr || right == nullptr)
+    {
+        sem_error("Operation not allowed", this);
+    }
+    //suma de 2 int es un int
+    if(left->type == "Int" && right->type == "Int")
+        type = "Int";
+
+    //suma de un int con un float es un float
     if(left->type == "Float" || right->type == "Float")
         type = "Float";
-    
+
+    // suma de un int o float con un string es un string
     if(left->type == "String" || right->type == "String")
         type = "String";
-    
-    Aritmetic::validate(st, ctx);
+
+    //Aritmetic::validate(st, ctx);
+
+    left->validate(st, ctx);
+    right->validate(st, ctx);
+
+    if(left->type == "Bool" || right->type == "Bool")
+    {
+        sem_error("Operation not allowed for boolean type", this);
+    }
+
+    if(left->type != right->type)
+    {
+        if(left->type == "Any" || right->type == "Any")
+        {
+            sem_warning("Opertation with Any type is not recommended", this);
+        }
+
+        if((left->type == "Int" && right->type == "String") || (left->type == "String" && right->type == "Int"))
+        {
+            sem_error("Operation + between int and string not allowed", this);
+        }
+        
+
+    }
+
+    validated = true;
 }
 
 void BooleanExp::validate(SymbolTable& st, Context& ctx)

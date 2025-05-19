@@ -1,4 +1,4 @@
-variable: String = "Hello World"
+variable: String = "World"
 
 def print_hello(name: String):
     print("Hello " + name)
@@ -6,5 +6,6 @@ def print_hello(name: String):
 def return_hello(name: String) -> String:
     return "Hello " + name
 
-variable = return_hello("World")
 print_hello(variable)
+variable = return_hello("World")
+print(variable)

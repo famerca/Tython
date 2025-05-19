@@ -1,8 +1,9 @@
 
 def prueba(cond: Int):
     if cond != 0:
-        limit: Int = 0
+        limit: Int = cond
         while limit > 0:
+            print(limit)
             limit = limit - 1
     else:
         print("limite debe ser mayor que 0")

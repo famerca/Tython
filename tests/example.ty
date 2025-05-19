@@ -1,10 +1,14 @@
 variable: String = "Hello World"
 variable1: Any = 10
 variable2: Float = 10.5
+variable4: Bool = True
 
 
 
-
-variable3: Int = 10
+variable3: Int = 5
 variable5: Int
-variable3 = variable3 + variable3
+variable3 = variable3 + variable2
+variable6: Float = variable2 / variable1
+variable5 = 5 / variable3
+
+variable3 = variable2

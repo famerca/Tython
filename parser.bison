@@ -36,7 +36,7 @@ Ast* ast = NULL;
 %token TOKEN_WHILE TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_GREATER TOKEN_LESS
 %token TOKEN_LESS_EQUAL TOKEN_GREATER_EQUAL TOKEN_COMMA TOKEN_LINEBREAK
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
-%token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE
+%token TOKEN_DIVIDE TOKEN_NUMBER TOKEN_COLON TOKEN_TYPE TOKEN_BOOLEAN
 
 %left TOKEN_WHILE TOKEN_FOR TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_COLON TOKEN_LINEBREAK  TOKEN_IF TOKEN_BREAK TOKEN_CONTINUE
 
@@ -61,7 +61,7 @@ Ast* ast = NULL;
 
 %type<astNode> program statement_list statement block expression declaration assignment definition parameters parameter arguments function_call
 %type<astNode> stmt_if term stmt_for stmt_while
-%type<str> TOKEN_STRING TOKEN_IDENTIFIER TOKEN_TYPE TOKEN_NUMBER
+%type<str> TOKEN_STRING TOKEN_IDENTIFIER TOKEN_TYPE TOKEN_NUMBER TOKEN_BOOLEAN
 %%
 
 // Regla principal
@@ -370,6 +370,9 @@ term :
     }
     | TOKEN_STRING {
         $$ = new String(*$1);
+    }
+    | TOKEN_BOOLEAN {
+        $$ = new Boolean(*$1);
     }
     | TOKEN_IDENTIFIER {
         $$ = new Identifier(*$1);

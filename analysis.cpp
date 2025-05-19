@@ -22,6 +22,12 @@ Analysis::Analysis(Ast *a) : ast(a), st()
 
     st.insert(print, "print", true);
 
+    Definition *str = new Definition("str", "String");
+    str->parameters.push_back(new Parameter("input", "Any"));
+    str->children.push_back(str->parameters[0]);
+
+    st.insert(str, "str", true);
+
     Definition *range = new Definition("range");
     range->parameters.push_back(new Parameter("Step", "Int"));
     range->parameters.push_back(new Parameter("Limit", "Int"));
@@ -35,6 +41,7 @@ Analysis::Analysis(Ast *a) : ast(a), st()
 
     delete print;
     delete range;
+    delete str;
 }
 
 

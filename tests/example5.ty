@@ -1,4 +1,4 @@
-max: Int = 0
+max: Int = 5
 str: String = "Hello "
 
 def print_cond(number: Int, str: String):

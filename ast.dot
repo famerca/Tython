@@ -1,19 +1,69 @@
 digraph AST {
   node0 [label="Root"]
   node1 [label="stat: Declaration"]
-  node2 [label="String"]
+  node2 [label="Number"]
   node1 -> node2;
   node0 -> node1;
-  node3 [label="stat: Declaration"]
-  node4 [label="/: Int"]
-  node5 [label="Number"]
-  node4 -> node5;
-  node6 [label="Number"]
-  node4 -> node6;
+  node3 [label="stat: While"]
+  node4 [label="Boolean"]
   node3 -> node4;
-  node0 -> node3;
-  node7 [label="stat: Declaration"]
-  node8 [label="Number"]
+  node5 [label="Block"]
+  node6 [label="stat: Assignment"]
+  node7 [label="+"]
+  node8 [label="Identifier: i"]
   node7 -> node8;
-  node0 -> node7;
+  node9 [label="Number"]
+  node7 -> node9;
+  node6 -> node7;
+  node5 -> node6;
+  node10 [label="expression"]
+  node11 [label="Identifier: i"]
+  node10 -> node11;
+  node5 -> node10;
+  node12 [label="stat: If"]
+  node13 [label="expression"]
+  node14 [label="Identifier: i"]
+  node13 -> node14;
+  node15 [label="Number"]
+  node13 -> node15;
+  node12 -> node13;
+  node16 [label="Block"]
+  node17 [label="Break"]
+  node16 -> node17;
+  node12 -> node16;
+  node5 -> node12;
+  node3 -> node5;
+  node0 -> node3;
+  node18 [label="Definition"]
+  node19 [label="Block"]
+  node20 [label="stat: Declaration"]
+  node21 [label="Number"]
+  node20 -> node21;
+  node19 -> node20;
+  node22 [label="stat: While"]
+  node23 [label="expression"]
+  node24 [label="Identifier: i"]
+  node23 -> node24;
+  node25 [label="Identifier: b"]
+  node23 -> node25;
+  node22 -> node23;
+  node26 [label="Block"]
+  node27 [label="stat: Assignment"]
+  node28 [label="+"]
+  node29 [label="Identifier: i"]
+  node28 -> node29;
+  node30 [label="Number"]
+  node28 -> node30;
+  node27 -> node28;
+  node26 -> node27;
+  node31 [label="return"]
+  node26 -> node31;
+  node22 -> node26;
+  node19 -> node22;
+  node18 -> node19;
+  node32 [label="Parameters"]
+  node33 [label="Parameter"]
+  node32 -> node33;
+  node18 -> node32;
+  node0 -> node18;
 }
