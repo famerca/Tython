@@ -1,10 +1,10 @@
-max: Int = 5
-str: String = "Hello "
+max: int = 5
+ss: str = "Hello "
 
-def print_cond(number: Int, str: String):
+def print_cond(number: int, ss: str):
     if(number > 0):
-        print(str)
+        print(ss)
     else:
         print(number)
         
-print_cond(max, str)
+print_cond(max, ss)

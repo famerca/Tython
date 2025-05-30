@@ -17,31 +17,41 @@ Analysis::Analysis(Ast *a) : ast(a), st()
     //Symbolos iniciales 
     error = false;
     Definition *print = new Definition("print");
-    print->parameters.push_back(new Parameter("printable", "Any"));
+    print->parameters.push_back(new Parameter("printable", "any"));
+    print->parameters.push_back(new Parameter("printable", "any"));
+    print->parameters[1]->optional = true;
     print->children.push_back(print->parameters[0]);
+    print->children.push_back(print->parameters[1]);
 
     st.insert(print, "print", true);
 
-    Definition *str = new Definition("str", "String");
-    str->parameters.push_back(new Parameter("input", "Any"));
+    Definition *str = new Definition("string", "str");
+    str->parameters.push_back(new Parameter("input", "any"));
     str->children.push_back(str->parameters[0]);
 
-    st.insert(str, "str", true);
+    st.insert(str, "string", true);
 
     Definition *range = new Definition("range");
-    range->parameters.push_back(new Parameter("Step", "Int"));
-    range->parameters.push_back(new Parameter("Limit", "Int"));
+    range->parameters.push_back(new Parameter("Step", "int"));
+    range->parameters.push_back(new Parameter("Limit", "int"));
 
     range->addChild(range->parameters[0]);
     range->addChild(range->parameters[1]);
 
     st.insert(range, "range", true);
 
+    Definition *sleep = new Definition("sleep");
+    sleep->parameters.push_back(new Parameter("time", "float"));
+    sleep->addChild(sleep->parameters[0]);
+
+    st.insert(sleep, "sleep", true);
+
     Resolution(a);
 
     delete print;
     delete range;
     delete str;
+    delete sleep;
 }
 
 

@@ -32,7 +32,7 @@ Ast* ast = NULL;
 // Token declarations
 %token TOKEN_STRING TOKEN_NOT TOKEN_AND TOKEN_OR TOKEN_BREAK TOKEN_IN TOKEN_CONTINUE
 %token TOKEN_ASSIGN TOKEN_IDENTIFIER TOKEN_LPAREN TOKEN_RPAREN TOKEN_ARROW TOKEN_IMPORT
-%token TOKEN_COMPARE TOKEN_DIFFERENT TOKEN_IF TOKEN_ELSE TOKEN_FOR TOKEN_DOT
+%token TOKEN_COMPARE TOKEN_DIFFERENT TOKEN_IF TOKEN_ELSE TOKEN_FOR TOKEN_DOT TOKEN_FROM
 %token TOKEN_WHILE TOKEN_FUNC_DEF TOKEN_RETURN TOKEN_GREATER TOKEN_LESS
 %token TOKEN_LESS_EQUAL TOKEN_GREATER_EQUAL TOKEN_COMMA TOKEN_LINEBREAK
 %token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY TOKEN_INDENT TOKEN_DEDENT
@@ -60,7 +60,7 @@ Ast* ast = NULL;
 %nonassoc UMINUS
 
 %type<astNode> program statement_list statement block expression declaration assignment definition parameters parameter arguments function_call
-%type<astNode> stmt_if term stmt_for stmt_while
+%type<astNode> stmt_if term stmt_for stmt_while stmt_import
 %type<str> TOKEN_STRING TOKEN_IDENTIFIER TOKEN_TYPE TOKEN_NUMBER TOKEN_BOOLEAN
 %%
 
@@ -150,13 +150,22 @@ statement:
         $$ = new Return();
         $$->line = @1.first_line;
     }
-    | TOKEN_IMPORT TOKEN_IDENTIFIER {
-
+    | stmt_import {
+        $$ = $1;
     }
     |  expression {
         $$ = $1;
     }
     ;
+
+stmt_import:
+    TOKEN_FROM TOKEN_IDENTIFIER TOKEN_IMPORT TOKEN_IDENTIFIER{
+        $$ = new Import(*$2, *$4);
+    }
+    | TOKEN_IMPORT TOKEN_IDENTIFIER{
+        $$ = new Import(*$2);
+    }
+;
 
 stmt_if:
     TOKEN_IF expression block %prec LOWER_THAN_ELSE{
@@ -263,6 +272,9 @@ arguments:
     | expression{
         $$ = new Ast("Arguments");
         $$->addChild($1);
+    }
+    | %empty {
+        $$ = new Ast("Arguments");
     }
     ;
 

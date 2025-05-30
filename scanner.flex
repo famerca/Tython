@@ -65,7 +65,8 @@ Boolean     True|False
 
 
 {SPACE}   { /* ignore */ }
-"import"      { return TOKEN_IMPORT; }
+"import"     { return TOKEN_IMPORT; }
+"from"     { return TOKEN_FROM; }
 "="          { return TOKEN_ASSIGN; }
 "if"          {     
                     if(pending_linebreak)

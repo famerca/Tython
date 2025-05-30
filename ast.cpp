@@ -761,7 +761,7 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
 
             type = def->type;
 
-            if(children.size() != def->parameters.size())
+            if(children.size() < Parameter::count(def->parameters))
             {
                 sem_error("Invalid arguments count", this);
             }

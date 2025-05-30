@@ -1,6 +1,6 @@
-number1: Int = 10
-number2: Int = 20
-number3: Int
+number1: int = 10
+number2: int = 20
+number3: int
 
 if number1 == number2 :
     print("number1 is greater than number2")

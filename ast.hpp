@@ -74,6 +74,37 @@ class Statement: public Ast {
         }
 };
 
+class Import: public Statement
+{
+    public:
+
+    Import(std::string i): Statement("Import")
+    {
+        from = "";
+        import = i;
+    }
+
+    Import(std::string f, std::string i): Statement("Import")
+    {
+        from = f;
+        import = i;
+    }
+
+    std::string output(const std::string &indent) override
+    {
+        if(from != "")
+            return indent + "from " + from + " import " + import;
+        return indent + "import " + import;
+    }
+
+
+    private:
+        std::string from;
+        std::string import;
+
+
+};
+
 class If: public Statement
 {
     public:
@@ -116,9 +147,21 @@ class Parameter : public Ast {
     public:
         std::string name;
         std::string type;
+        bool optional;
         
-        Parameter(std::string i, std::string t ) : Ast("Parameter"), name(i), type(t)
+        Parameter(std::string i, std::string t ) : Ast("Parameter"), name(i), type(t), optional(false)
         {}
+
+        static int count(std::vector<Parameter *> params)
+        {
+            int count = 0;
+            for (Parameter *p : params)
+            {
+                if(!p->optional)
+                    ++count;
+            }
+            return count;
+        }
 };
 
 class Return: public Ast 

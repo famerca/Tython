@@ -1,4 +1,4 @@
-variable: String = "Hello World"
+variable: str = "Hello World"
 if variable == "Hello World" :
     print("Variable is equal to Hello World")
     

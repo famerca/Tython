@@ -1,12 +1,11 @@
-import time
-
+from time import sleep
 
 def foo():
-	time.sleep(0.1);
-
+    sleep(0.1)
 
 for i:int in range(0,100):
-	print("numero", i)
-	foo()
-	if(i > 50):
-		print(p)
+    p:int = 0
+    print("numero", i)
+    foo()
+    if(i > 50):
+        print(p)
