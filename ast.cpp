@@ -67,7 +67,7 @@ void Declaration::validate(SymbolTable& st, Context& ctx)
         
         expr->validate(st, ctx);
 
-        if(this->type == "Any")
+        if(this->type == "any")
         {
             sem_warning("Any type is not recommended", this);
         }else if(this->type != expr->type)
@@ -87,11 +87,11 @@ std::string Declaration::output(const std::string &indent)
 {
     if(children.size() == 0)
     {
-        if(type == "Int")
+        if(type == "int")
             return indent + name + " = 0";
-        if(type == "Float")
+        if(type == "float")
             return indent + name + " = 0.0";
-        if(type == "String" )
+        if(type == "str" )
             return indent + name + " = \"\"";
         
         return indent + name + " = False";
@@ -133,12 +133,12 @@ void Assignment::validate(SymbolTable& st, Context& ctx)
     Expression *expr = dynamic_cast<Expression*>(children[0]);
     expr->validate(st, ctx);
 
-    if(this->type != "Any" && this->type != expr->type)
+    if(this->type != "any" && this->type != expr->type)
     {
 
-        if(this->type == "Int" && expr->type == "Float")
+        if(this->type == "int" && expr->type == "float")
             sem_warning("Assignment from float to int", this);
-        else if(this->type == "Float" && expr->type == "Int")
+        else if(this->type == "float" && expr->type == "int")
             sem_warning("Assignment from int to float", this);
         else
         {
@@ -179,7 +179,7 @@ void Identifier::validate(SymbolTable& st, Context& ctx)
     validated = true;
 }
 
-Number::Number(std::string v) : Expression(v,"Int")
+Number::Number(std::string v) : Expression(v,"int")
 {
     this->label = "Number";
 
@@ -187,7 +187,7 @@ Number::Number(std::string v) : Expression(v,"Int")
     {
         if(v[i] == '.')
         {
-            type = "Float";
+            type = "float";
             break;
         }
     }
@@ -218,7 +218,7 @@ std::string Aritmetic::output( const std::string &indent )
 
 std::string Div::output( const std::string &indent ) 
 {
-    if(type == "Int")
+    if(type == "int")
         return indent + children[0]->output("") + " // " + children[1]->output("");
 
     return indent + children[0]->output("") + " / " + children[1]->output("");
@@ -314,25 +314,25 @@ void Aritmetic::validate(SymbolTable& st, Context& ctx)
     left->validate(st, ctx);
     right->validate(st, ctx);
 
-    if(left->type == "Bool" || right->type == "Bool")
+    if(left->type == "bool" || right->type == "bool")
     {
         sem_error("Operation " + this->label + " not allowed for boolean type", this);
     }
 
-    if(left->type == "String" || right->type == "String")
+    if(left->type == "str" || right->type == "str")
     {
         sem_error("Operation " + this->label + " not allowed for string type", this);
     }
 
     if(left->type != right->type)
     {
-        if(left->type == "Any" || right->type == "Any")
+        if(left->type == "any" || right->type == "any")
         {
             sem_warning("Opertation with Any type is not recommended", this);
         }else
         {
 
-            if((left->type == "Int" && right->type == "Float") || (left->type == "Float" && right->type == "Int"))
+            if((left->type == "int" && right->type == "float") || (left->type == "float" && right->type == "int"))
             {
 
                 std::string error = "Operation between int and float loses precision \n";
@@ -366,10 +366,10 @@ void Div::validate(SymbolTable& st, Context& ctx)
         sem_error("Division by 0 not allowed", this);
     }
 
-    if(right->type == "Int" && right->type == "Int")
-        type = "Int";
+    if(right->type == "int" && right->type == "int")
+        type = "int";
     else
-        type = "Float";
+        type = "float";
 
     Aritmetic::validate(st, ctx);
 }
@@ -387,35 +387,35 @@ void Sum::validate(SymbolTable& st, Context& ctx)
         sem_error("Operation not allowed", this);
     }
     //suma de 2 int es un int
-    if(left->type == "Int" && right->type == "Int")
-        type = "Int";
+    if(left->type == "int" && right->type == "int")
+        type = "int";
 
     //suma de un int con un float es un float
-    if(left->type == "Float" || right->type == "Float")
-        type = "Float";
+    if(left->type == "float" || right->type == "float")
+        type = "float";
 
     // suma de un int o float con un string es un string
-    if(left->type == "String" || right->type == "String")
-        type = "String";
+    if(left->type == "str" || right->type == "str")
+        type = "str";
 
     //Aritmetic::validate(st, ctx);
 
     left->validate(st, ctx);
     right->validate(st, ctx);
 
-    if(left->type == "Bool" || right->type == "Bool")
+    if(left->type == "bool" || right->type == "bool")
     {
         sem_error("Operation not allowed for boolean type", this);
     }
 
     if(left->type != right->type)
     {
-        if(left->type == "Any" || right->type == "Any")
+        if(left->type == "any" || right->type == "any")
         {
             sem_warning("Opertation with Any type is not recommended", this);
         }
 
-        if((left->type == "Int" && right->type == "String") || (left->type == "String" && right->type == "Int"))
+        if((left->type == "int" && right->type == "str") || (left->type == "str" && right->type == "int"))
         {
             sem_error("Operation + between int and string not allowed", this);
         }
@@ -444,7 +444,7 @@ void BooleanExp::validate(SymbolTable& st, Context& ctx)
     left->validate(st, ctx);
     right->validate(st, ctx);
 
-    if(left->type != "Bool" || right->type != "Bool")
+    if(left->type != "bool" || right->type != "bool")
     {
         sem_error("Binary operation allowed only for boolean type", this);
     }
@@ -464,7 +464,7 @@ void Uminus::validate(SymbolTable& st, Context& ctx)
     Expression* left = dynamic_cast<Expression*>(children[0]);
     left->validate(st, ctx);
 
-    if(left->type != "Int" && left->type != "Float")
+    if(left->type != "int" && left->type != "float")
         sem_error("Aritmetic operation allowed only for int and float types", this);
 
     validated = true;
@@ -484,13 +484,13 @@ void Not::validate(SymbolTable& st, Context& ctx)
 
     left->validate(st, ctx);
     
-    if(left->type == "Any")
+    if(left->type == "any")
     {
         sem_warning("Opertation with Any type is not recommended", this);
         return;
     }
 
-    if(left->type != "Bool")
+    if(left->type != "bool")
         sem_error("Binary operation allowed only for boolean type", this);
 
     validated = true;
@@ -520,13 +520,13 @@ void LogicExp::validateNaN(SymbolTable& st, Context& ctx)
 
     if(left->type != right->type)
     {
-        if(left->type == "Any" || right->type == "Any")
+        if(left->type == "any" || right->type == "any")
         {
             sem_warning("Opertation with Any type is not recommended", this);
         }else
         {
 
-            if(!((left->type == "Int" && right->type == "Float") || (left->type == "Float" && right->type == "Int")))
+            if(!((left->type == "int" && right->type == "float") || (left->type == "float" && right->type == "int")))
             {
 
                 std::string error = "Logic operation '" + this->label + "' for different types not allowed \n";
@@ -564,13 +564,13 @@ void LogicExp::validateNum(SymbolTable& st, Context& ctx)
     left->validate(st, ctx);
     right->validate(st, ctx);
 
-    if(left->type == "Any" || right->type == "Any")
+    if(left->type == "any" || right->type == "any")
     {
         sem_warning("Opertation with Any type is not recommended", this);
     }else
     {
 
-        if((left->type != "Int" && left->type != "Float") || (right->type != "Float" && right->type != "Int"))
+        if((left->type != "int" && left->type != "float") || (right->type != "float" && right->type != "int"))
         {
 
             std::string error = "Logic operation '" + this->label + "' for non-numeric types not allowed \n";
@@ -603,7 +603,7 @@ void Definition::validate(SymbolTable& st, Context& ctx)
             
             parameters.push_back(paramAst);
 
-            if(paramAst->type == "Any")
+            if(paramAst->type == "any")
             {
                 sem_warning("Type Any is not recommended", this);
             }
@@ -771,10 +771,10 @@ void FunctionCall::validate(SymbolTable& st, Context& ctx)
                 Expression* expr = dynamic_cast<Expression*>(children[i]);
                 expr->validate(st, ctx);
 
-                if(def->parameters[i]->type == "Any")
+                if(def->parameters[i]->type == "any")
                     continue;
 
-                if(expr->type == "Any")
+                if(expr->type == "any")
                 {
                     sem_warning("Use of Any type not recommended", this);
                     continue;

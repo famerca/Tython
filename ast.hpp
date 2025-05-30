@@ -160,7 +160,7 @@ class For: public Statement
        
         For(std::string i) : Statement("For") 
         {
-            iterator = new Parameter(i, "Any");
+            iterator = new Parameter(i, "any");
         }
 
         For(std::string i, std::string t) : Statement("For") 
@@ -207,7 +207,7 @@ class Assignment: public Statement
         std::string name;
         std::string type;
 
-        Assignment(std::string n) : Statement("Assignment"), name(n), type("Any"){}
+        Assignment(std::string n) : Statement("Assignment"), name(n), type("any"){}
 
         void validate(SymbolTable& st, Context& ctx) override;
 
@@ -247,7 +247,7 @@ class Number: public Expression {
 class Boolean: public Expression
 {
     public:
-        Boolean(std::string v) : Expression(v, "Bool") {
+        Boolean(std::string v) : Expression(v, "bool") {
             this->label = "Boolean";
         }
 
@@ -260,7 +260,7 @@ class Boolean: public Expression
 class String: public Expression
 {
     public:
-        String(std::string v) : Expression(v, "String") {
+        String(std::string v) : Expression(v, "str") {
             this->label = "String";
         }
 
@@ -273,7 +273,7 @@ class String: public Expression
 class Identifier: public Expression
 {
     public:
-        Identifier(std::string v, std::string t = "Any") : Expression(v, t) 
+        Identifier(std::string v, std::string t = "any") : Expression(v, t) 
         {
             this->label = "Identifier: " + v;
         }
@@ -290,7 +290,7 @@ class Aritmetic: public Expression
 {
     public:
 
-        Aritmetic(std::string op, int l) : Expression(op, "Int", l) {
+        Aritmetic(std::string op, int l) : Expression(op, "int", l) {
             this->label = op;
         }
 
@@ -348,7 +348,7 @@ class Uminus: public Aritmetic
 class BooleanExp: public Expression
 {
     public:
-        BooleanExp(std::string op, int l) : Expression(op, "Bool" ,l)
+        BooleanExp(std::string op, int l) : Expression(op, "bool" ,l)
         {
             label = op + ": Bool"; 
         }
@@ -385,7 +385,7 @@ class Not: public BooleanExp
 class LogicExp: public Expression
 {
     public:
-        LogicExp(std::string op, int l) : Expression(op, "Bool", l) {}
+        LogicExp(std::string op, int l) : Expression(op, "bool", l) {}
 
         void validateNaN(SymbolTable& st, Context& ctx);
         void validateNum(SymbolTable& st, Context& ctx);

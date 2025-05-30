@@ -17,7 +17,7 @@ LETTER     [A-Za-z]
 IDENTIFIER (_|{LETTER})({DIGIT}|{LETTER}|_)*
 TEXT       \"({DIGIT}|{LETTER}|{SPACE})*\"
 NUMBER      {DIGIT}+("."{DIGIT}+)?
-TYPE        Int|Float|String|Bool|Any
+TYPE        int|float|str|bool|any
 Boolean     True|False
 
 %%

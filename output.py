@@ -1,16 +1,10 @@
-i = 0
-while True:
-    i = i + 1
-    print(i)
-    if i > 10:
-        break
-
-
-def loop(b):
-    i = 0
-    while i < b:
-        i = i + 1
-        return
-
-
-
+variable = "Hello World"
+variable1 = 10
+variable2 = 10.5
+variable4 = True
+variable3 = 5
+variable5 = 0
+variable3 = variable3 + variable2
+variable6 = variable2 / variable1
+variable5 = 5 // variable3
+variable3 = variable2

@@ -11,11 +11,11 @@ extern Ast* ast;
 //extern int yydebug;
 
 void usage(char *argv[]) {
-    std::cout << "Uso: " << argv[0] << " [opciones] archivo_fuente" << std::endl;
-    std::cout << "Opciones:" << std::endl;
-    std::cout << "  -ast           Generar el árbol de sintaxis abstracta (AST) en un archivo .dot." << std::endl;
-    std::cout << "  -o <nombre>    Especificar el nombre del archivo de salida." << std::endl;
-    std::cout << "  --help, -h    Mostrar esta ayuda." << std::endl;
+    std::cout << "Use: " << argv[0] << " [options] <input file>" << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  -ast           Generate abs syntax tree (ast.dot)." << std::endl;
+    std::cout << "  -o <output_name>    Output file name." << std::endl;
+    std::cout << "  --help, -h    Show this help." << std::endl;
     exit(1);
 }
 
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
             if (i + 1 < argc) {
                 output_file = argv[++i]; // Tomamos el siguiente argumento como el nombre del archivo
             } else {
-                std::cerr << "Error: Se esperaba un nombre de archivo después de -o." << std::endl;
+                std::cerr << "Error: expected output file name after -o" << std::endl;
                 usage(argv);
             }
         } else if (argumento == "--help" || argumento == "-h") {
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
             input_file = argumento;
             input_find = true;
         } else {
-            std::cerr << "Opción o argumento desconocido: " << argumento << std::endl;
+            std::cerr << "Option not recognized: " << argumento << std::endl;
             usage(argv);
         }
     }
