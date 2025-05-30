@@ -65,6 +65,7 @@ Boolean     True|False
 
 
 {SPACE}   { /* ignore */ }
+"import"      { return TOKEN_IMPORT; }
 "="          { return TOKEN_ASSIGN; }
 "if"          {     
                     if(pending_linebreak)
@@ -153,15 +154,17 @@ Boolean     True|False
                 yylval.str = new std::string(yytext);
                 return TOKEN_STRING;
              }
-"+"         { return TOKEN_PLUS; }
-"-"         { return TOKEN_MINUS; }
-"*"         { return TOKEN_MULTIPLY; }
-"/"         { return TOKEN_DIVIDE; }
 {NUMBER}    { 
                 saw_linebreak = 0; 
                 yylval.str = new std::string(yytext);
                 return TOKEN_NUMBER;
              }
+"+"         { return TOKEN_PLUS; }
+"-"         { return TOKEN_MINUS; }
+"*"         { return TOKEN_MULTIPLY; }
+"/"         { return TOKEN_DIVIDE; }
+"."         { return TOKEN_DOT;}
+
 . {
     printf("Error: Unexpected character: %c\n", yytext[0]);
     exit(1);
