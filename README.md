@@ -18,3 +18,13 @@ En Tython, puedes declarar variables con tipos específicos:
 nombre: str = "Juan"
 edad: int = 25
 es_estudiante: bool = True
+```
+## Uso
+```Bash
+./tython [options] input.ty
+./tython -o output.py input.py
+```
+### opciones
+- **-ast**: genera un ast.dot para el ast del lenguajes
+- **-o**: especificar el archivo de salida
+- **-h,--help**: muestra ayuda sobre como usar
