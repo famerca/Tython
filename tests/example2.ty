@@ -1,9 +1,10 @@
-number1: int = 10
-number2: int = 20
-number3: int
+from time import sleep
 
-if number1 == number2 :
-    print("number1 is greater than number2")
-else:
-    number3 = number1 + number2 / 2 * 5
-    print(number3)
+def foo():
+    sleep(0.1)
+
+for i:int in range(0,50):
+    print("numero", i)
+    foo()
+    if(i > 20):
+        print("numero" + i)
